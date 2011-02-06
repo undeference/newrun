@@ -1,0 +1,14 @@
+#!/bin/bash
+name="$(basename "$PWD")"
+version="$(git log -1 --format=%h)"
+name="$name-$version"
+archive="$name.tar.bz2"
+if [ -f "$archive" ]; then
+	echo "$archive is already ready"
+	exit
+fi
+git clone . "$name"
+git log --oneline > "$name/ChangeLog"
+tar -cjvf "$archive" --recursion "$name" --exclude '*/.git'
+rm -rf "$name"
+echo "$archive ready for distribution"
