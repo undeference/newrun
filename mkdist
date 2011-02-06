@@ -1,4 +1,5 @@
 #!/bin/bash
+# This file is part of newrun, copyright © 2011 M. Kristall
 name="$(basename "$PWD")"
 version="$(git log -1 --format=%h)"
 name="$name-$version"

@@ -1,4 +1,7 @@
 #!/bin/bash
+# This program is free software. You can redistribute it and/or modify it under
+# the same terms as perl itself. Copyright © 2011 M. Kristall
+
 ## Exit statuses
 # 1		no or invalid config
 # 2		config error

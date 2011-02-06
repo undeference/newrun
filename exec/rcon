@@ -1,3 +1,5 @@
+# This file is part of newrun, copyright © 2011 M. Kristall
+
 ## Config variables
 # CONFIG	the rconpassword for this server
 # ADDRESS	address to use if 127.0.0.1 will not work
