@@ -1,0 +1,38 @@
+###
+# (mandatory) type of "executioner" to use; rcon and screen currently supported
+# rcon uses rcon to control the server
+# screen runs the server in a screen session
+EXEC=rcon
+
+## these settings are used if EXEC=rcon
+# name of config with rconPassword; default autogen_server.cfg, autogen.cfg
+CONFIG=server.cfg
+# IP address to send rcon packets to; default 127.0.0.1
+ADDRESS=::1
+## these settings are used if EXEC=screen:
+# name of the screen session to use; default server
+SESSION=tremded
+# (mandatory) name of the screen window to use
+WINDOW=gpp
+
+###
+# command for reloading game.* that forces pk3 download if pk3s were updated;
+# default "map tremor"
+RELOADCOMMAND="map nexus6"
+
+###
+# path to tremded; default /usr/local/games/tremulous/tremded.x86
+SERVER=/usr/local/games/tremulous/tremded-gpp.x86
+# fs_basepath; default /usr/local/games/tremulous
+BASEPATH=/usr/local/games/tremulous
+# fs_homepath; default $HOME/.tremulous
+HOMEPATH=$HOME/.tremulous
+# fs_basegame; default base
+BASENAME=gpp
+# dedicated; default 1
+DEDICATED=2
+# net_port, net_port6; default 30720
+PORT=30720
+
+# additional arguments to pass to tremded
+ARGS="+exec server.cfg"

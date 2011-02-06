@@ -1,0 +1,10 @@
+# paths
+_PIDPATH="/var/tmp"
+_CONFIGPATH="$_PATH/conf"
+_EXECPATH="$_PATH/exec"
+
+# command to send when reloading the game
+# this has to cause an fs_restart
+# advanceMapRotation will work if you have map rotations set up
+# this can safely be set in a server conf
+RELOADCOMMAND="map tremor"

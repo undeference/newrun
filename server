@@ -1,0 +1,82 @@
+#!/bin/bash
+## Exit statuses
+# 1		no or invalid config
+# 2		config error
+# 3		executioner error
+# 255		potential error
+
+## Config variables
+# EXEC		(executioner) functions to control the server
+# SERVER	full path to tremded to execute
+# DEFAULT_PIDFILE
+#		the default pid file used by the server, if applicable
+# DEDICATED	dedicated mode to use
+# BASEPATH	fs_basepath
+# HOMEPATH	fs_homepath
+# GAMENAME	fs_game
+# ARGS		additional arguments to pass to server
+
+## EXEC functions
+# Cmd		exec a command on the server
+#	arguments=command to exec
+# Start		start the server
+#	arguments=optional extra arguments to server (after ARGS)
+# Stop		stop the server
+#	arguments=optional message to send
+# Restart	restart the server
+#	arguments=optional extra arguments to server (after ARGS)
+
+_PATH="$(dirname "$0")"
+_NAME="$(basename "$0")"
+. "$_PATH/configuration"
+. "$_PATH/functions"
+
+if [[ "$1" == "" ]]; then
+	echo "$_NAME path/to/server/config [args]" >&2
+	exit 1
+fi
+
+config="$1"
+shift 1
+what="$1"
+shift 1
+
+case "$what" in
+	start)
+		readconfig "$config"
+		if getpid; then
+			if isrunning; then
+				echo "$_NAME: server already running pid=$PID" \
+					>&2
+				exit 255
+			fi
+			rm -f "$PIDFILE" &> /dev/null
+		fi
+		Start $ARGS $*
+		if getpid; then
+			echo server pid=$PID
+		fi
+		;;
+	stop)
+		readconfig "$config"
+		Stop $*
+		;;
+	restart)
+		readconfig "$config"
+		Restart $ARGS $*
+		if getpid; then
+			echo server pid=$PID
+		fi
+		;;
+	reload)
+		readconfig "$config"
+		Reload $*
+		;;
+	exec)
+		readconfig "$config"
+		Cmd $*
+		;;
+	*)
+		echo "$_NAME start|stop|restart|reload|exec args"
+		exit 255
+esac

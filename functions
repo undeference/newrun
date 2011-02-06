@@ -1,0 +1,133 @@
+readconfig () {
+	EXEC=
+	SERVER=
+	DEDICATED=
+	BASEPATH=
+	HOMEPATH=
+	GAMENAME=
+	ARGS=
+
+	local config="$1"
+	if ! . "$_CONFIGPATH/$config" &> /dev/null; then
+		echo "$_NAME: could not exec '$config'" >&2
+		exit 1
+	fi
+
+	local svname="$(basename "$config")"
+	PIDFILE="$_PIDPATH/$svname.pid"
+
+	# set up defaults
+	if [[ "$SERVER" == "" ]]; then
+		SERVER=/usr/local/games/tremulous/tremded.*
+		if [ ! -x "$SERVER" ]; then
+			echo "$_NAME: SERVER cannot be used: $SERVER" >&2
+			exit 2
+		fi
+	fi
+	if [[ "$DEDICATED" == "" ]]; then
+		DEDICATED=1
+		echo "$_NAME: DEDICATED was not set, running as LAN server" >&2
+	fi
+	if [[ "$BASEPATH" == "" ]]; then
+		BASEPATH="/usr/local/games/tremulous"
+		if [ ! -d "$BASEPATH" ]; then
+			echo "$_NAME: BASEPATH does not exist: $BASEPATH" >&2
+			exit 2
+		fi
+	fi
+	if [[ "$HOMEPATH" == "" ]]; then
+		# tremded will create this one
+		HOMEPATH="$HOME/.tremulous"
+	fi
+	if [[ "$PORT" == "" ]]; then
+		PORT=30720
+	fi
+	if [[ "$GAMENAME" == "" ]]; then
+		GAMENAME="base"
+	fi
+
+	if ! . "$_EXECPATH/$EXEC"; then
+		echo "$_NAME: could not exec '$EXEC'" >&2
+		exit 1
+	fi
+}
+
+getpid () {
+	PID=
+	if [ -f "$PIDFILE" ]; then
+		read PID < "$PIDFILE"
+	else
+		return 1
+	fi
+}
+
+savepid () {
+	if [[ "$PIDFILE" != "" && "$PIDFILE" != "$DEFAULT_PIDFILE" ]]; then
+		echo "$PID" > "$PIDFILE"
+	fi
+}
+
+removepid () {
+	rm -f "$DEFAULT_PIDFILE" "$PIDFILE" &> /dev/null
+}
+
+pidfilehack () {
+	PID=
+	if [[ "$DEFAULT_PIDFILE" != "" && -f "$DEFAULT_PIDFILE" ]]; then
+		read PID < "$DEFAULT_PIDFILE"
+		removepid
+	else
+		PID=($(pidof "$SERVER"))
+		if (( ${#PID[*]} == 1 )); then
+			PID="${PID[0]}"
+		elif (( ${#PID[*]} > 1 )); then
+			PID=-${#PID[*]}
+		else
+			PID=0
+		fi
+	fi
+}
+
+isrunning () {
+	if [[ "$PID" == "" ]]; then
+		getpid
+	fi
+	kill -0 $PID &> /dev/null
+	return $?
+}
+
+forcequit () {
+	if ! isrunning; then
+		return
+	fi
+	sleep 2
+	if isrunning; then
+		kill -QUIT $PID &> /dev/null
+		sleep 1
+		if isrunning; then
+			echo "$_NAME: server doesn't want to quit" >&2
+			kill -KILL $PID &> /dev/null
+		fi
+	fi
+}
+
+countdown () {
+	local i=$1
+	shift 1
+	local s=s
+	for (( ; i > 0; i-- )); do
+		if (( i == 1 )); then
+			s=
+		fi
+		Cmd cp "^$i"$* in $i second$s
+		sleep 1
+	done
+}
+
+Reload () {
+	if [[ "$*" != "" ]]; then
+		Cmd say $*
+	fi
+	countdown 5 Restart
+	Cmd "$RELOADCOMMAND"
+}
