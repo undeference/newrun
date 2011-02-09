@@ -35,10 +35,8 @@ Cmd () {
 	# prepended onto theirs
 	# either we exec their command prematurely or we try to overwrite it
 	# prematurely execing a command could be dangerous
-	local pre='\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b'
-	local cmd="$(echo -ne "$pre")"
-	cmd="$cmd$*$(echo -ne '\r')"
-	screen -q -S "$SESSION" -p "$WINDOW" -X stuff "$cmd" &> /dev/null
+	local x=$'\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b'
+	screen -q -S "$SESSION" -p "$WINDOW" -X stuff "$x$*"$'\r' &> /dev/null
 }
 
 Start () {
