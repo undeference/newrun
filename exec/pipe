@@ -19,6 +19,7 @@ Cmd () {
 
 Start () {
 	"$SERVER" \
+		+set com_pipefile "$PIPE" \
 		+set dedicated "$DEDICATED" \
 		+set net_port "$PORT" +set net_port6 "$PORT" \
 		+set fs_basepath "$BASEPATH" \
