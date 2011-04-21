@@ -21,9 +21,8 @@ sessionexists () {
 	local list="$(screen -list)"
 	if [[ "$list" =~ "$SESSION" ]]; then
 		return 0
-	else
-		return 1
 	fi
+	return 1
 }
 
 Cmd () {
