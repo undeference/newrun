@@ -1,0 +1,54 @@
+# This file is part of newrun, copyright © 2011 M. Kristall
+
+## Config variables
+# PIPE		path to the pipe file (something like .tremded_pipe?)
+
+if [[ "$PIPE" == "" ]]; then
+	echo "$_NAME: PIPE is not set" >&2
+	exit 2
+fi
+
+available () {
+	isrunning && [ -p "$PIPE" ] && return 0
+	return 1
+}
+
+Cmd () {
+	available && echo $* > "$PIPE"
+}
+
+Start () {
+	"$SERVER" \
+		+set dedicated "$DEDICATED" \
+		+set net_port "$PORT" +set net_port6 "$PORT" \
+		+set fs_basepath "$BASEPATH" \
+		+set fs_homepath "$HOMEPATH" \
+		+set fs_game "$GAMENAME" \
+		$* \
+		+set rconPassword "$RCON" < /dev/null &> /dev/null &
+	PID=$!
+	disown
+	savepid
+}
+
+Stop () {
+	if available; then
+		Cmd quit $*
+		forcequit
+	else
+		echo "$_NAME: server is not running?" >&2
+		exit 255
+	fi
+	removepid
+}
+
+Restart () {
+	if isrunning; then
+		countdown 5 Restart
+		Stop Please reconnect in a few seconds
+		Start $*
+	else
+		echo "$_NAME: server is not running?" >&2
+		exit 255
+	fi
+}
