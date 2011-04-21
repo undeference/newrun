@@ -22,14 +22,14 @@ if [[ "$CONFIG" == "" ]]; then
 	if [[ "$cfg" == "" ]]; then
 		_findcfg "autogen.cfg"
 		if [[ "$cfg" == "" ]]; then
-			echo "$_NAME: can't find a cfg file to use" >&2
+			warn "$_NAME: can't find a cfg file to use"
 			exit 3
 		fi
 	fi
 else
 	_findcfg "$CONFIG"
 	if [[ "$cfg" == "" ]]; then
-		echo "$_NAME: CONFIG does not exist: '$CONFIG'" >&2
+		warn "$_NAME: CONFIG does not exist: '$CONFIG'"
 		exit 3
 	fi
 fi
@@ -49,7 +49,7 @@ estr="$(grep -v ^/ "$cfg")"
 eval "${estr//set?/set }"
 
 if [[ "$RCON" == "" ]]; then
-	echo "$_NAME: no rconpassword detected, things could be broken" >&2
+	warn "$_NAME: no rconpassword detected, things could be broken"
 fi
 
 Cmd () {
@@ -60,7 +60,7 @@ Cmd () {
 Start () {
 	if [[ "$RCON" == "" ]]; then
 		RCON="$(uuidgen)"
-		echo "$_NAME: setting rconpassword to $RCON" >&2
+		warn "$_NAME: setting rconpassword to $RCON"
 		echo "seta rconPassword \"$RCON\"" >> "$cfg"
 	fi
 	"$SERVER" \
@@ -81,7 +81,7 @@ Stop () {
 		Cmd quit $*
 		forcequit
 	else
-		echo "$_NAME: server is not running?" >&2
+		warn "$_NAME: server is not running?"
 		exit 255
 	fi
 	removepid
@@ -93,7 +93,7 @@ Restart () {
 		Stop Please reconnect in a few seconds
 		Start $*
 	else
-		echo "$_NAME: server is not running?" >&2
+		warn "$_NAME: server is not running?"
 		exit 255
 	fi
 }

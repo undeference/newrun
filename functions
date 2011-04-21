@@ -1,5 +1,16 @@
 # This file is part of newrun, copyright © 2011 M. Kristall
 
+warn () {
+	echo $* >&2
+}
+
+include () {
+	if ! . "$1"; then
+		warn "$_NAME: could not exec '$1'"
+		exit 1
+	fi
+}
+
 readconfig () {
 	EXEC=
 	SERVER=
@@ -11,7 +22,7 @@ readconfig () {
 
 	local config="$1"
 	if ! . "$_CONFIGPATH/$config" &> /dev/null; then
-		echo "$_NAME: could not exec '$config'" >&2
+		warn "$_NAME: could not exec '$config'"
 		exit 1
 	fi
 
@@ -22,18 +33,18 @@ readconfig () {
 	if [[ "$SERVER" == "" ]]; then
 		SERVER=/usr/local/games/tremulous/tremded.*
 		if [ ! -x "$SERVER" ]; then
-			echo "$_NAME: SERVER cannot be used: $SERVER" >&2
+			warn "$_NAME: SERVER cannot be used: $SERVER"
 			exit 2
 		fi
 	fi
 	if [[ "$DEDICATED" == "" ]]; then
 		DEDICATED=1
-		echo "$_NAME: DEDICATED was not set, running as LAN server" >&2
+		warn "$_NAME: DEDICATED was not set, running as LAN server"
 	fi
 	if [[ "$BASEPATH" == "" ]]; then
 		BASEPATH="/usr/local/games/tremulous"
 		if [ ! -d "$BASEPATH" ]; then
-			echo "$_NAME: BASEPATH does not exist: $BASEPATH" >&2
+			warn "$_NAME: BASEPATH does not exist: $BASEPATH"
 			exit 2
 		fi
 	fi
@@ -48,10 +59,7 @@ readconfig () {
 		GAMENAME="base"
 	fi
 
-	if ! . "$_EXECPATH/$EXEC"; then
-		echo "$_NAME: could not exec '$EXEC'" >&2
-		exit 1
-	fi
+	include "$_EXECPATH/$EXEC"
 }
 
 getpid () {
@@ -107,7 +115,7 @@ forcequit () {
 		kill -QUIT $PID &> /dev/null
 		sleep 1
 		if isrunning; then
-			echo "$_NAME: server doesn't want to quit" >&2
+			warn "$_NAME: server doesn't want to quit"
 			kill -KILL $PID &> /dev/null
 		fi
 	fi

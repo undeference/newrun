@@ -6,15 +6,15 @@
 
 # for various scripts to communicate with the server
 if [[ "$SESSION" == "" ]]; then
-	echo "$_NAME: consider setting SESSION; will use 'server'" >&2
+	warn "$_NAME: consider setting SESSION; will use 'server'"
 	SESSION="server"
 fi
 if [[ "$WINDOW" == "" ]]; then
-	echo "$_NAME: WINDOW needs to be set for now" >&2
+	warn "$_NAME: WINDOW needs to be set for now"
 	exit 2
 fi
 if [[ "$WINDOW" =~ ^[0-9]+$ ]]; then
-	echo "$_NAME: WINDOW is numeric so we might not get what we want" >&2
+	warn "$_NAME: WINDOW is numeric so we might not get what we want"
 fi
 
 sessionexists () {
@@ -27,7 +27,7 @@ sessionexists () {
 
 Cmd () {
 	if ! sessionexists; then
-		echo "$_NAME: no such session" >&2
+		warn "$_NAME: no such session"
 		exit 3
 	fi
 	# if someone started typing something before we "stuff", our text gets
@@ -42,7 +42,7 @@ Start () {
 	# if there is no screen session with that name, create it
 	if ! sessionexists; then
 		if ! screen -q -S "$SESSION" -d -m &> /dev/null; then
-			echo "$_NAME: could not create session '$SESSION'" >&2
+			warn "$_NAME: could not create session '$SESSION'"
 			exit 3
 		fi
 	fi
@@ -60,11 +60,11 @@ Start () {
 	sleep 1
 	pidfilehack
 	if (( PID == 0 )); then
-		echo "$_NAME: server may not be running" >&2
+		warn "$_NAME: server may not be running"
 		exit 255
 	fi
 	if (( PID < 0 )); then
-		echo "$_NAME: could not reliably determine server's pid" >&2
+		warn "$_NAME: could not reliably determine server's pid"
 	else
 		savepid
 	fi
@@ -72,7 +72,7 @@ Start () {
 
 Stop () {
 	if ! sessionexists; then
-		echo "$_NAME: no such session" >&2
+		warn "$_NAME: no such session"
 		exit 3
 	fi
 	Cmd quit $*
@@ -82,7 +82,7 @@ Stop () {
 
 Restart () {
 	if ! sessionexists; then
-		echo "$_NAME: no such session" >&2
+		warn "$_NAME: no such session"
 		exit 3
 	fi
 	countdown 5 Restarting

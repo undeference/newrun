@@ -4,7 +4,7 @@
 # PIPE		path to the pipe file (something like .tremded_pipe?)
 
 if [[ "$PIPE" == "" ]]; then
-	echo "$_NAME: PIPE is not set" >&2
+	warn "$_NAME: PIPE is not set"
 	exit 2
 fi
 
@@ -37,7 +37,7 @@ Stop () {
 		Cmd quit $*
 		forcequit
 	else
-		echo "$_NAME: server is not running?" >&2
+		warn "$_NAME: server is not running?"
 		exit 255
 	fi
 	removepid
@@ -49,7 +49,7 @@ Restart () {
 		Stop Please reconnect in a few seconds
 		Start $*
 	else
-		echo "$_NAME: server is not running?" >&2
+		warn "$_NAME: server is not running?"
 		exit 255
 	fi
 }
