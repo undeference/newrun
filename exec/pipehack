@@ -32,6 +32,7 @@ start () {
 Start () {
 	start $* &
 	disown
+	sleep 1
 	pidfilehack
 	savepid
 }

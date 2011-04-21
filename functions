@@ -93,7 +93,7 @@ pidfilehack () {
 		elif (( ${#PID[*]} > 1 )); then
 			PID=-${#PID[*]}
 		else
-			PID=0
+			PID=
 		fi
 	fi
 }
