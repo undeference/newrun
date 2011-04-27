@@ -6,9 +6,11 @@
 include "$_EXECPATH/pipe"
 
 start () {
-	mkfifo "$pipefile"
 	(
 		while true; do
+			if [ ! -p "$pipefile" ]; then
+				mkfifo "$pipefile"
+			fi
 			while read -r x < "$pipefile"; do
 				echo "$x"
 				y=($x)
