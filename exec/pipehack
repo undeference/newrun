@@ -1,15 +1,15 @@
 # This file is part of newrun, copyright © 2011 M. Kristall
 
 ## Config variables
-# PIPE		path to the pipe file (something like .tremded_pipe?)
+# PIPE		name of the pipe file (something like .tremded_pipe?)
 
 include "$_EXECPATH/pipe"
 
 start () {
-	mkfifo "$PIPE"
+	mkfifo "$pipefile"
 	(
 		while true; do
-			while read -r x < "$PIPE"; do
+			while read -r x < "$pipefile"; do
 				echo $x
 				y=($x)
 				y[0]=$(echo ${y[0]} | tr [A-Z] [a-z])
@@ -25,7 +25,7 @@ start () {
 		+set fs_homepath "$HOMEPATH" \
 		+set fs_game "$GAMENAME" \
 		$* &> /dev/null
-	rm "$PIPE"
+	rm "$pipefile"
 }
 
 Start () {

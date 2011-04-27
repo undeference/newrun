@@ -1,20 +1,22 @@
 # This file is part of newrun, copyright © 2011 M. Kristall
 
 ## Config variables
-# PIPE		path to the pipe file (something like .tremded_pipe?)
+# PIPE		name of the pipe file (something like .tremded_pipe?)
 
 if [[ "$PIPE" == "" ]]; then
 	warn "$_NAME: PIPE is not set"
 	exit 2
 fi
 
+pipefile="$HOMEPATH/$BASEPATH/$PIPE"
+
 available () {
-	isrunning && [ -p "$PIPE" ] && return 0
+	isrunning && [ -p "$pipefile" ] && return 0
 	return 1
 }
 
 Cmd () {
-	available && echo $* > "$PIPE"
+	available && echo $* > "$pipefile"
 }
 
 Start () {
