@@ -10,7 +10,7 @@ start () {
 	(
 		while true; do
 			while read -r x < "$pipefile"; do
-				echo $x
+				echo "$x"
 				y=($x)
 				y[0]=$(echo ${y[0]} | tr [A-Z] [a-z])
 				if [[ "${y[0]}" == "quit" ]]; then
