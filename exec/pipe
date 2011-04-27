@@ -8,7 +8,7 @@ if [[ "$PIPE" == "" ]]; then
 	exit 2
 fi
 
-pipefile="$HOMEPATH/$BASEPATH/$PIPE"
+pipefile="$HOMEPATH/$GAMENAME/$PIPE"
 
 available () {
 	isrunning && [ -p "$pipefile" ] && return 0
