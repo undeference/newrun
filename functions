@@ -5,7 +5,7 @@ warn () {
 }
 
 include () {
-	if ! . "$1"; then
+	if ! . "$1" &> /dev/null; then
 		warn "$_NAME: could not exec '$1'"
 		exit 1
 	fi
@@ -57,6 +57,10 @@ readconfig () {
 	fi
 	if [[ "$GAMENAME" == "" ]]; then
 		GAMENAME="base"
+	fi
+	if [[ "$EXEC" == "" ]]; then
+		warn "$_NAME: EXEC needs to be specified"
+		exit 2
 	fi
 
 	include "$_EXECPATH/$EXEC"
