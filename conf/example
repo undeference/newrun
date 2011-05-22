@@ -1,3 +1,5 @@
+# This file is part of newrun
+
 ###
 # command for reloading game.* that forces pk3 download if pk3s were updated;
 # default "map tremor"
@@ -21,20 +23,31 @@ PORT=30720
 ARGS="+exec server.cfg"
 
 ###
-# (mandatory) type of "executioner" to use; rcon and screen currently supported
+# (mandatory) type of "executioner" to use
 # rcon uses rcon to control the server
 # screen runs the server in a screen session
-EXEC=rcon
+# pipe uses a pipe to control the server (if com_pipefile is supported)
+# pipehack is like pipe but emulates com_pipefile support
+EXEC=screen
+
+# type of "executioner" to use for communicating with the server
+# rcon sends commands via rcon (rate limited)
+# screen enters strings into screen console (slow)
+# pipe uses the pipe specified by com_pipefile
+# (pipehack is identical to pipe)
+COMM=pipe
 
 ## these settings are used if EXEC=rcon
 # name of config with rconPassword; default autogen_server.cfg, autogen.cfg
 CONFIG=server.cfg
 # IP address to send rcon packets to; default 127.0.0.1
 ADDRESS=::1
+
 ## these settings are used if EXEC=screen
 # name of the screen session to use; default server
 SESSION=tremded
 # (mandatory) name of the screen window to use
 WINDOW=gpp
+
 ## these settings are used if EXEC=pipe or EXEC=pipehack
 PIPE=$HOMEPATH/$BASENAME/.tremded_pipe

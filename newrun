@@ -54,29 +54,29 @@ case "$what" in
 			fi
 			rm -f "$PIDFILE" &> /dev/null
 		fi
-		Start $ARGS $*
+		Start $ARGS "$@"
 		if getpid; then
 			echo server pid=$PID
 		fi
 		;;
 	stop)
 		readconfig "$config"
-		Stop $*
+		Stop "$@"
 		;;
 	restart)
 		readconfig "$config"
-		Restart $ARGS $*
+		Restart $ARGS "$@"
 		if getpid; then
 			echo server pid=$PID
 		fi
 		;;
 	reload)
 		readconfig "$config"
-		Reload $*
+		Reload "$@"
 		;;
 	exec)
 		readconfig "$config"
-		Cmd $*
+		Cmd "$@"
 		;;
 	*)
 		echo "$_NAME start|stop|restart|reload|exec args"

@@ -3,9 +3,9 @@
 ## Config variables
 # PIPE		name of the pipe file (something like .tremded_pipe?)
 
-include "$_EXECPATH/pipe"
+COMM=pipe
 
-start () {
+_pipehack_start () {
 	(
 		while true; do
 			if [ ! -p "$pipefile" ]; then
@@ -20,18 +20,12 @@ start () {
 				fi
 			done
 		done
-	) | "$SERVER" \
-		+set dedicated "$DEDICATED" \
-		+set net_port "$PORT" +set net_port6 "$PORT" \
-		+set fs_basepath "$BASEPATH" \
-		+set fs_homepath "$HOMEPATH" \
-		+set fs_game "$GAMENAME" \
-		$* &> /dev/null
+	) | "$SERVER" "$@" &> /dev/null
 	rm "$pipefile"
 }
 
-Start () {
-	start $* &
+pipehackStart () {
+	_pipehack_start "$(stringify "$@")" &
 	disown
 	sleep 1
 	pidfilehack

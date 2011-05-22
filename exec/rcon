@@ -9,7 +9,7 @@ if [[ "$ADDRESS" == "" ]]; then
 fi
 
 cfg=
-_findcfg () {
+_rcon_findcfg () {
 	if [ -f "$HOMEPATH/$GAMENAME/$1" ]; then
 		cfg="$HOMEPATH/$GAMENAME/$1"
 	elif [ -f "$BASEPATH/$GAMENAME/$1" ]; then
@@ -18,16 +18,16 @@ _findcfg () {
 }
 
 if [[ "$CONFIG" == "" ]]; then
-	_findcfg "autogen_server.cfg"
+	_rcon_findcfg "autogen_server.cfg"
 	if [[ "$cfg" == "" ]]; then
-		_findcfg "autogen.cfg"
+		_rcon_findcfg "autogen.cfg"
 		if [[ "$cfg" == "" ]]; then
 			warn "$_NAME: can't find a cfg file to use"
 			exit 3
 		fi
 	fi
 else
-	_findcfg "$CONFIG"
+	_rcon_findcfg "$CONFIG"
 	if [[ "$cfg" == "" ]]; then
 		warn "$_NAME: CONFIG does not exist: '$CONFIG'"
 		exit 3
@@ -45,55 +45,34 @@ set () {
 	fi
 	shopt -u nocasematch
 }
-estr="$(grep -v ^/ "$cfg")"
+estr="$(grep -i rcon "$cfg")"
 eval "${estr//set?/set }"
 
 if [[ "$RCON" == "" ]]; then
 	warn "$_NAME: no rconpassword detected, things could be broken"
 fi
 
-Cmd () {
-	echo -e "\xff\xff\xff\xffrcon \"$RCON\" $*" |
-		nc -uw0 $ADDRESS $PORT &> /dev/null
+rconCmd () {
+	echo $'\xff\xff\xff\xffrcon '"\"$RCON\" $(stringify $@)" |
+		nc -uw1 $ADDRESS $PORT 2> /dev/null
 }
 
-Start () {
+rconStartCmd () {
 	if [[ "$RCON" == "" ]]; then
 		RCON="$(uuidgen)"
 		warn "$_NAME: setting rconpassword to $RCON"
 		echo "seta rconPassword \"$RCON\"" >> "$cfg"
 	fi
-	"$SERVER" \
-		+set dedicated "$DEDICATED" \
-		+set net_port "$PORT" +set net_port6 "$PORT" \
-		+set fs_basepath "$BASEPATH" \
-		+set fs_homepath "$HOMEPATH" \
-		+set fs_game "$GAMENAME" \
-		$* \
-		+set rconPassword "$RCON" < /dev/null &> /dev/null &
-	PID=$!
-	disown
-	savepid
+	pusharg +set rconPassword "$RCON"
 }
 
-Stop () {
+rconStop () {
 	if isrunning; then
-		Cmd quit $*
+		Cmd quit "$(stringify "$@")"
 		forcequit
 	else
 		warn "$_NAME: server is not running?"
 		exit 255
 	fi
 	removepid
-}
-
-Restart () {
-	if isrunning; then
-		countdown 5 Restart
-		Stop Please reconnect in a few seconds
-		Start $*
-	else
-		warn "$_NAME: server is not running?"
-		exit 255
-	fi
 }

@@ -10,47 +10,28 @@ fi
 
 pipefile="$HOMEPATH/$GAMENAME/$PIPE"
 
-available () {
+_pipe_available () {
 	isrunning && [ -p "$pipefile" ] && return 0
 	return 1
 }
 
-Cmd () {
-	available && echo $* > "$pipefile"
+pipeCmd () {
+	if _pipe_available; then
+		stringify "$@" > "$pipefile"
+	fi
 }
 
-Start () {
-	"$SERVER" \
-		+set com_pipefile "$PIPE" \
-		+set dedicated "$DEDICATED" \
-		+set net_port "$PORT" +set net_port6 "$PORT" \
-		+set fs_basepath "$BASEPATH" \
-		+set fs_homepath "$HOMEPATH" \
-		+set fs_game "$GAMENAME" \
-		$* < /dev/null &> /dev/null &
-	PID=$!
-	disown
-	savepid
+pipeStartCmd () {
+	pusharg +set com_pipefile "$PIPE"
 }
 
-Stop () {
-	if available; then
-		Cmd quit $*
+pipeStop () {
+	if _pipe_available; then
+		Cmd quit "$(stringify "$@")"
 		forcequit
 	else
 		warn "$_NAME: server is not running?"
 		exit 255
 	fi
 	removepid
-}
-
-Restart () {
-	if isrunning; then
-		countdown 5 Restart
-		Stop Please reconnect in a few seconds
-		Start $*
-	else
-		warn "$_NAME: server is not running?"
-		exit 255
-	fi
 }

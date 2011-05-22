@@ -17,7 +17,12 @@ if [[ "$WINDOW" =~ ^[0-9]+$ ]]; then
 	warn "$_NAME: WINDOW is numeric so we might not get what we want"
 fi
 
-sessionexists () {
+screen () {
+	echo "screen $@"
+	/usr/bin/screen "$@"
+}
+
+_screen_sessionexists () {
 	local list="$(screen -list)"
 	if [[ "$list" =~ "$SESSION" ]]; then
 		return 0
@@ -25,8 +30,8 @@ sessionexists () {
 	return 1
 }
 
-Cmd () {
-	if ! sessionexists; then
+screenCmd () {
+	if ! _screen_sessionexists; then
 		warn "$_NAME: no such session"
 		exit 3
 	fi
@@ -35,12 +40,13 @@ Cmd () {
 	# either we exec their command prematurely or we try to overwrite it
 	# prematurely execing a command could be dangerous
 	local x=$'\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b'
-	screen -q -S "$SESSION" -p "$WINDOW" -X stuff "$x$*"$'\r' &> /dev/null
+	x="$x$(stringify "$@")"
+	screen -q -S "$SESSION" -p "$WINDOW" -X stuff "$x"$'\r' &> /dev/null
 }
 
-Start () {
+screenStart () {
 	# if there is no screen session with that name, create it
-	if ! sessionexists; then
+	if ! _screen_sessionexists; then
 		if ! screen -q -S "$SESSION" -d -m &> /dev/null; then
 			warn "$_NAME: could not create session '$SESSION'"
 			exit 3
@@ -48,13 +54,7 @@ Start () {
 	fi
 
 	screen -q -S "$SESSION" -X screen -t "$WINDOW" \
-		"$SERVER" \
-		+set dedicated "$DEDICATED" \
-		+set net_port "$PORT" +set net_port6 "$PORT" \
-		+set fs_basepath "$BASEPATH" \
-		+set fs_homepath "$HOMEPATH" \
-		+set fs_game "$GAMENAME" \
-		$* &> /dev/null
+		"$SERVER" "$@" &> /dev/null
 
 	# 1s should be sufficient for the server to start
 	sleep 1
@@ -70,22 +70,22 @@ Start () {
 	fi
 }
 
-Stop () {
-	if ! sessionexists; then
+screenStop () {
+	if ! _screen_sessionexists; then
 		warn "$_NAME: no such session"
 		exit 3
 	fi
-	Cmd quit $*
+	Cmd quit "$(stringify "$@")"
 	forcequit
 	removepid
 }
 
-Restart () {
-	if ! sessionexists; then
+screenRestart () {
+	if ! _screen_sessionexists; then
 		warn "$_NAME: no such session"
 		exit 3
 	fi
 	countdown 5 Restarting
 	Stop Please reconnect in a few seconds
-	Start $*
+	Start "$(stringify "$@")"
 }

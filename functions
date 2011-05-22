@@ -1,11 +1,11 @@
 # This file is part of newrun, copyright © 2011 M. Kristall
 
 warn () {
-	echo $* >&2
+	echo "$@" #>&2  stderr gets redirected to /dev/null in most places
 }
 
 include () {
-	if ! . "$1" &> /dev/null; then
+	if ! . "$1" 2> /dev/null; then
 		warn "$_NAME: could not exec '$1'"
 		exit 1
 	fi
@@ -13,6 +13,7 @@ include () {
 
 readconfig () {
 	EXEC=
+	COMM=
 	SERVER=
 	DEDICATED=
 	BASEPATH=
@@ -21,10 +22,7 @@ readconfig () {
 	ARGS=
 
 	local config="$1"
-	if ! . "$_CONFIGPATH/$config" &> /dev/null; then
-		warn "$_NAME: could not exec '$config'"
-		exit 1
-	fi
+	include "$_CONFIGPATH/$config"
 
 	local svname="$(basename "$config")"
 	PIDFILE="$_PIDPATH/$svname.pid"
@@ -64,6 +62,11 @@ readconfig () {
 	fi
 
 	include "$_EXECPATH/$EXEC"
+	if [[ "$COMM" == "" ]]; then
+		COMM="$EXEC";
+	else
+		include "$_EXECPATH/$COMM"
+	fi
 }
 
 getpid () {
@@ -92,10 +95,10 @@ pidfilehack () {
 		removepid
 	else
 		PID=($(pidof "$SERVER"))
-		if (( ${#PID[*]} == 1 )); then
+		if (( ${#PID[@]} == 1 )); then
 			PID="${PID[0]}"
-		elif (( ${#PID[*]} > 1 )); then
-			PID=-${#PID[*]}
+		elif (( ${#PID[@]} > 1 )); then
+			PID=-${#PID[@]}
 		else
 			PID=
 		fi
@@ -105,6 +108,9 @@ pidfilehack () {
 isrunning () {
 	if [[ "$PID" == "" ]]; then
 		getpid
+	fi
+	if [[ "$PID" == "" ]]; then
+		return 1
 	fi
 	kill -0 $PID &> /dev/null
 	return $?
@@ -133,14 +139,91 @@ countdown () {
 		if (( i == 1 )); then
 			s=
 		fi
-		Cmd cp "^$i"$* in $i second$s
+		Cmd cp "^$i$@ in $i second$s"
 		sleep 1
 	done
 }
 
+Cmd () {
+	"$COMM"Cmd "$@" 2>/dev/null
+	if (( $? == 127 )); then
+		"$EXEC"Cmd "$@" 2>/dev/null
+	fi
+	if (( $? == 127 )); then
+		echo "$_NAME: $COMM does not specify a way to communicate" >&2
+		exit 1
+	fi
+}
+
+stringify () {
+	local str append
+	while (( $# > 0 )); do
+		if [[ "$1" =~ [" ;"] ]]; then
+			append="\"$1\""
+		else
+			append=$1
+		fi
+		if [[ "$str" == "" ]]; then
+			str=$append
+		else
+			str="$str $append"
+		fi
+		shift 1
+	done
+	echo "$str"
+}
+
+pusharg () {
+	STARTCMD=("${STARTCMD[@]}" "$@")
+}
+
+Start () {
+	STARTCMD=(
+		+set dedicated "$DEDICATED"
+		+set net_port "$PORT"
+		+set net_port6 "$PORT"
+		+set fs_basepath "$BASEPATH"
+		+set fs_homepath "$HOMEPATH"
+		+set fs_game "$GAMENAME"
+	)
+	"$EXEC"StartCmd 2>/dev/null
+	if [[ "$COMM" != "$EXEC" ]]; then
+		"$COMM"StartCmd 2>/dev/null
+	fi
+	"$EXEC"Start "${STARTCMD[@]}" "$@" 2>/dev/null
+	if (( $? == 127 )); then
+		"$SERVER" "$@" < /dev/null &> /dev/null &
+		PID=$!
+		disown
+		savepid
+	fi
+}
+
+Stop () {
+	"$EXEC"Stop "$@" 2>/dev/null
+	if (( $? == 127 )); then
+		forcequit
+		removepid
+	fi
+}
+
+Restart () {
+	"$EXEC"Restart "$@" 2>/dev/null
+	if (( $? == 127 )); then
+		if isrunning; then
+			countdown 5 Restart
+			Stop Please reconnect in a few seconds
+			Start "$@"
+		else
+			warn "$_NAME: server is not running?"
+			exit 255
+		fi
+	fi
+}
+
 Reload () {
-	if [[ "$*" != "" ]]; then
-		Cmd say $*
+	if [[ "$@" != "" ]]; then
+		Cmd say "$@"
 	fi
 	countdown 5 Restart
 	Cmd "$RELOADCOMMAND"
