@@ -17,11 +17,6 @@ if [[ "$WINDOW" =~ ^[0-9]+$ ]]; then
 	warn "$_NAME: WINDOW is numeric so we might not get what we want"
 fi
 
-screen () {
-	echo "screen $@"
-	/usr/bin/screen "$@"
-}
-
 _screen_sessionexists () {
 	local list="$(screen -list)"
 	if [[ "$list" =~ "$SESSION" ]]; then
