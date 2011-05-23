@@ -2,32 +2,81 @@
 
 ## Config variables
 # PIPE		name of the pipe file (something like .tremded_pipe?)
+# EXECHACK	executor to use for communicating with the server
+
+# Use this if you want to send commands using a fifo (pipe file)
+# 
+
+if [[ "$EXEC" != "pipehack" ]]; then
+	warn "$_NAME: COMM=pipehack is not valid"
+	exit 255
+fi
+
+if [[ "$EXECHACK" != "" ]]; then
+	include "$_EXECPATH/$EXECHACK"
+fi
 
 COMM=pipe
 
+_pipehack_send () {
+	if [[ "$EXECHACK" == "" ]]; then
+		echo "$@"
+	else
+		"$EXECHACK"Cmd "$@"
+	fi
+}
+
 _pipehack_start () {
-	(
-		while true; do
-			if [ ! -p "$pipefile" ]; then
-				mkfifo "$pipefile"
+	local pid=$PID
+	while true; do
+		if [ ! -p "$pipefile" ]; then
+			mkfifo "$pipefile"
+		fi
+		while read -r x < "$pipefile"; do
+			_pipehack_send "$x"
+			y=($x)
+			y[0]=$(echo ${y[0]} | tr [A-Z] [a-z])
+			if [[ "${y[0]}" == "quit" ]]; then
+				break 2
 			fi
-			while read -r x < "$pipefile"; do
-				echo "$x"
-				y=($x)
-				y[0]=$(echo ${y[0]} | tr [A-Z] [a-z])
-				if [[ "${y[0]}" == "quit" ]]; then
-					break 2
-				fi
-			done
 		done
-	) | "$SERVER" "$@" &> /dev/null
+		if ! kill -0 $pid 2>/dev/null; then
+			break 1
+		fi
+	done
 	rm "$pipefile"
+	if [[ "$EXECHACK" != "" ]]; then
+		"$EXECHACK"Stop "${x:5}"
+	fi
 }
 
 pipehackStart () {
-	_pipehack_start "$(stringify "$@")" &
+	local r=127
+	if [[ "$EXECHACK" != "" ]]; then
+		"$EXECHACK"Start "$@"
+		r=$?
+	fi
+	if (( r == 127 )); then
+		EXECHACK=
+		_pipehack_start | "$SERVER" "$@" &> /dev/null &
+	else
+		_pipehack_start &> /dev/null &
+		PID=$!
+	fi
 	disown
-	sleep 1
-	pidfilehack
+	COMM=pipe
 	savepid
+}
+
+pipehackStartCmd () {
+	# prevent pipeStartCmd from being called (don't want com_pipefile set)
+	COMM="$EXEC"
+	if [[ "$EXECHACK" != "" ]]; then
+		"$EXECHACK"StartCmd
+	fi
+}
+
+pipehackStop () {
+	"$EXECHACK"Stop "$@"
+	return $?
 }
