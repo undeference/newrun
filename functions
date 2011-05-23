@@ -192,7 +192,7 @@ Start () {
 	fi
 	"$EXEC"Start "${STARTCMD[@]}" "$@" 2>/dev/null
 	if (( $? == 127 )); then
-		"$SERVER" "$@" < /dev/null &> /dev/null &
+		"$SERVER" "${STARTCMD[@]}" "$@" < /dev/null &> /dev/null &
 		PID=$!
 		disown
 		savepid
@@ -202,6 +202,7 @@ Start () {
 Stop () {
 	"$EXEC"Stop "$@" 2>/dev/null
 	if (( $? == 127 )); then
+		Cmd quit "$(stringify "$@")" 2> /dev/null
 		forcequit
 		removepid
 	fi
