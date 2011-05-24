@@ -27,7 +27,7 @@ ARGS="+exec server.cfg"
 # rcon uses rcon to control the server
 # screen runs the server in a screen session
 # pipe uses a pipe to control the server (if com_pipefile is supported)
-# pipehack is like pipe but emulates com_pipefile support
+# pipehack emulates com_pipefile support, using a different "executioner"
 EXEC=screen
 
 # type of "executioner" to use for communicating with the server
@@ -51,3 +51,8 @@ WINDOW=gpp
 
 ## these settings are used if EXEC=pipe or EXEC=pipehack
 PIPE=$HOMEPATH/$BASENAME/.tremded_pipe
+
+## these settings are used if EXEC=pipehack 
+# if set, uses EXECHACK as "executioner" to start/communicate with server
+# otherwise, pipes commands directly to server
+EXECHACK=
