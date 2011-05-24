@@ -81,6 +81,7 @@ getpid () {
 savepid () {
 	if [[ "$PIDFILE" != "" && "$PIDFILE" != "$DEFAULT_PIDFILE" ]]; then
 		echo "$PID" > "$PIDFILE"
+		chmod 600 "$PIDFILE" &> /dev/null
 	fi
 }
 
