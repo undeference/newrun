@@ -77,7 +77,7 @@ if [ ! -z "$_PLUGINPATH" ] && [ -d "$_PLUGINPATH" ]; then
 	echo "Loading plugins…"
 	shopt -s nullglob
 	for plugin in "$_PLUGINPATH/"*; do
-		echo "	$plugin"
+		echo "	$(basename "$plugin")"
 		. "$plugin"
 	done
 fi
