@@ -1,0 +1,72 @@
+push cmds hi cmd_hi
+cmd_hi () {
+	(( rand=RANDOM % 66 ))
+	case $rand in
+		 0) echo "Pershëndetje Botë";;
+		 1) echo "أهلاً بالعالم";;
+		 2) echo "Բարե՛ւ, աշխարհ։";;
+		 3) echo "Salam Dünya";;
+		 4) echo "Ahoj Světe!";;
+		 5) echo "Kaixo mundua!";;
+		 6) echo "Добры дзень, свет!";;
+		 7) echo "Shani Mwechalo!";;
+		 8) echo "Shagatam Prithivi!";;
+		 9) echo "Zdravo Svijete!";;
+		10) echo "Здравей, свят!";;
+		11) echo "Hola món!";;
+		12) echo "你好，世界！";;
+		13) echo "Klahowya Hayas Klaska";;
+		14) echo "Bok Svijete!";;
+		15) echo "Hej, Verden!";;
+		16) echo "Hallo, wereld!";;
+		17) echo "Hello, world!";;
+		18) echo "Saluton mondo!";;
+		19) echo "Tere maailm!";;
+		20) echo "Hei maailma!";;
+		21) echo "Salut le Monde!";;
+		22) echo "Hallo, wrâld!";;
+		23) echo "Ola mundo!";;
+		24) echo "Hallo Welt!";;
+		25) echo "Γεια σου κόσμε!";;
+		26) echo "Aloha Honua";;
+		27) echo "שלום עולם";;
+		28) echo "नमस्ते, दुनिया!";;
+		29) echo "Nyob zoo ntiaj teb.";;
+		30) echo "Helló világ!";;
+		31) echo "Halló heimur!";;
+		32) echo "Halo Dunia!";;
+		33) echo "Dia dhaoibh, a dhomhain!";;
+		34) echo "Ciao Mondo!";;
+		35) echo "こんにちは、世界！";;
+		36) echo "ಹಲೋ, ವರ್ಲ್ಡ್!";;
+		37) echo "Habari dunia!";;
+		38) echo "Niatia thi!";;
+		39) echo "안녕하세요, 세상을!";;
+		40) echo "AVE MVNDE";;
+		41) echo "Sveika, Pasaule!";;
+		42) echo "Sveikas, Pasauli";;
+		43) echo "Moien Welt!";;
+		44) echo "Manao ahoana ry tany!";;
+		45) echo "Namaskaram, lokame";;
+		46) echo "Merhba lid-dinja";;
+		47) echo "Hallo verden!";;
+		48) echo "سلام دنیا";;
+		49) echo "Witaj siecie!";;
+		50) echo "Olá, mundo!";;
+		51) echo "Salut lume!";;
+		52) echo "Здравствуй, мир!";;
+		53) echo "Zdravo Svete!";;
+		54) echo "Ahoj, svet!";;
+		55) echo "Pozdravljen svet!";;
+		56) echo "¡Hola mundo!";;
+		57) echo "Hejsan världen!";;
+		58) echo "Kamusta mundo!";;
+		59) echo "வணக்கம், உலக!";;
+		60) echo "Merhaba Dünya!";;
+		61) echo "Здрастуй, світ!";;
+		62) echo "Xin chào thế giới";;
+		63) echo "S'mae byd!";;
+		64) echo "העלא וועלט";;
+		65) echo "Bună ziua, lume!";;
+	esac
+}

@@ -174,8 +174,10 @@ stringify () {
 	echo "$str"
 }
 
-pusharg () {
-	STARTCMD=("${STARTCMD[@]}" "$@")
+push () {
+	local arr="$1"
+	shift 1
+	eval "$arr=(\"\${$arr[@]}\" \"\$@\")"
 }
 
 Start () {

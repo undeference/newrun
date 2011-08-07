@@ -34,51 +34,67 @@ _NAME="$(basename "$0")"
 . "$_PATH/configuration"
 . "$_PATH/functions"
 
-if [[ "$1" == "" ]]; then
-	warn "$_NAME path/to/server/config [args]"
+config="$1"
+shift 1
+
+if [[ "$config" == "" ]]; then
+	warn "$_NAME config cmd [args]"
 	exit 1
 fi
 
-config="$1"
-shift 1
-what="$1"
+cmds=()
+cmd_start () {
+	if getpid; then
+		if isrunning; then
+			warn "$_NAME: server already running pid=$PID"
+			exit 255
+		fi
+		rm -f "$PIDFILE" &> /dev/null
+	fi
+	Start $ARGS "$@"
+	if getpid; then
+		echo "server pid=$PID"
+	fi
+}
+
+cmd_restart () {
+	Restart $ARGS "$@"
+	if getpid; then
+		echo "server pid=$PID"
+	fi
+}
+push cmds start cmd_start
+push cmds restart cmd_restart
+push cmds stop Stop
+push cmds reload Reload
+push cmds exec Cmd
+
+cmd="$1"
 shift 1
 
-case "$what" in
-	start)
+# load plugins late
+if [ ! -z "$_PLUGINPATH" ] && [ -d "$_PLUGINPATH" ]; then
+	echo "Loading plugins…"
+	shopt -s nullglob
+	for plugin in "$_PLUGINPATH/"*; do
+		echo "	$plugin"
+		. "$plugin"
+	done
+fi
+
+err=
+for (( i = 0; i < ${#cmds[@]}; i += 2 )); do
+	if (( i > 0 )); then
+		err="$err|${cmds[$i]}"
+	else
+		err="${cmds[$i]}"
+	fi
+	if [[ "$cmd" == "${cmds[$i]}" ]]; then
 		readconfig "$config"
-		if getpid; then
-			if isrunning; then
-				warn "$_NAME: server already running pid=$PID"
-				exit 255
-			fi
-			rm -f "$PIDFILE" &> /dev/null
-		fi
-		Start $ARGS "$@"
-		if getpid; then
-			echo server pid=$PID
-		fi
-		;;
-	stop)
-		readconfig "$config"
-		Stop "$@"
-		;;
-	restart)
-		readconfig "$config"
-		Restart $ARGS "$@"
-		if getpid; then
-			echo server pid=$PID
-		fi
-		;;
-	reload)
-		readconfig "$config"
-		Reload "$@"
-		;;
-	exec)
-		readconfig "$config"
-		Cmd "$@"
-		;;
-	*)
-		echo "$_NAME start|stop|restart|reload|exec args"
-		exit 255
-esac
+		"${cmds[$i + 1]}" "$@"
+		exit 0
+	fi
+done
+
+warn "$_NAME $config $err [args]"
+exit 255

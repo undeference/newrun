@@ -63,7 +63,7 @@ rconStartCmd () {
 		warn "$_NAME: setting rconpassword to $RCON"
 		echo "seta rconPassword \"$RCON\"" >> "$cfg"
 	fi
-	pusharg +set rconPassword "$RCON"
+	push STARTCMD +set rconPassword "$RCON"
 }
 
 rconStop () {

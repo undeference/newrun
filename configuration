@@ -4,6 +4,7 @@
 _PIDPATH="/var/tmp"
 _CONFIGPATH="$_PATH/conf"
 _EXECPATH="$_PATH/exec"
+_PLUGINPATH="$_PATH/plugins"
 
 DEFAULT_PIDFILE="/tmp/tremulous_server.pid"
 

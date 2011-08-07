@@ -22,7 +22,7 @@ pipeCmd () {
 }
 
 pipeStartCmd () {
-	pusharg +set com_pipefile "$PIPE"
+	push STARTCMD +set com_pipefile "$PIPE"
 }
 
 pipeStop () {
