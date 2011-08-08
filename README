@@ -1,6 +1,6 @@
 Copyright © 2011 M. Kristall
 
-"newrun" (for lack of a better name) is meant for controlling game servers
+newrun is meant for controlling game servers
 
 Getting started
 1. Pick a good place to put the important files. The files "configuration" and
@@ -11,16 +11,16 @@ Getting started
    should be a good starting point
 
 Start the server (args = arguments to pass to the server)
-$ ./server configname start [args]
+$ ./newrun configname start [args]
 
 Restart the server (args = arguments to pass to the server)
-$ ./server configname restart [args]
+$ ./newrun configname restart [args]
 
 Stop the server
-$ ./server configname stop [message]
+$ ./newrun configname stop [message]
 
 Reload the server (usually just a map change)
-$ ./server configname reload [message]
+$ ./newrun configname reload [message]
 
 Run command on the server (command = command to run)
-$ ./server configname exec command
+$ ./newrun configname exec command
