@@ -85,13 +85,13 @@ fi
 err=
 for (( i = 0; i < ${#cmds[@]}; i += 2 )); do
 	if (( i > 0 )); then
-		err="$err|${cmds[$i]}"
+		err="$err|${cmds[i]}"
 	else
-		err="${cmds[$i]}"
+		err="${cmds[i]}"
 	fi
-	if [[ "$cmd" == "${cmds[$i]}" ]]; then
+	if [[ "$cmd" == "${cmds[i]}" ]]; then
 		readconfig "$config"
-		"${cmds[$i + 1]}" "$@"
+		"${cmds[i + 1]}" "$@"
 		exit 0
 	fi
 done
