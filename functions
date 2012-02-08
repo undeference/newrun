@@ -30,10 +30,10 @@ readconfig () {
 	# set up defaults
 	if [[ "$SERVER" == "" ]]; then
 		SERVER=/usr/local/games/tremulous/tremded.*
-		if [ ! -x "$SERVER" ]; then
-			warn "$_NAME: SERVER cannot be used: $SERVER"
-			exit 2
-		fi
+	fi
+	if [ ! -x "$SERVER" ]; then
+		warn "$_NAME: SERVER cannot be used: $SERVER"
+		exit 2
 	fi
 	if [[ "$DEDICATED" == "" ]]; then
 		DEDICATED=1
@@ -41,10 +41,10 @@ readconfig () {
 	fi
 	if [[ "$BASEPATH" == "" ]]; then
 		BASEPATH="/usr/local/games/tremulous"
-		if [ ! -d "$BASEPATH" ]; then
-			warn "$_NAME: BASEPATH does not exist: $BASEPATH"
-			exit 2
-		fi
+	fi
+	if [ ! -d "$BASEPATH" ]; then
+		warn "$_NAME: BASEPATH does not exist: $BASEPATH"
+		exit 2
 	fi
 	if [[ "$HOMEPATH" == "" ]]; then
 		# tremded will create this one
