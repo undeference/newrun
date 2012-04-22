@@ -225,5 +225,5 @@ Reload () {
 		Cmd say "$@"
 	fi
 	countdown 5 Restart
-	Cmd "$RELOADCOMMAND"
+	Cmd $RELOADCOMMAND
 }
