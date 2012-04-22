@@ -1,4 +1,4 @@
-# This file is part of newrun, copyright © 2011 M. Kristall
+# This file is part of newrun, copyright © 2011, 2012 M. Kristall
 
 warn () {
 	echo "$@" #>&2  stderr gets redirected to /dev/null in most places
@@ -118,12 +118,12 @@ isrunning () {
 }
 
 forcequit () {
-	if ! isrunning; then
-		return
-	fi
-	sleep 2
 	if isrunning; then
-		kill -QUIT $PID &> /dev/null
+		sleep 1
+		if ! isrunning; then
+			return
+		fi
+			kill -QUIT $PID &> /dev/null
 		sleep 1
 		if isrunning; then
 			warn "$_NAME: server doesn't want to quit"
@@ -214,14 +214,9 @@ Stop () {
 Restart () {
 	"$EXEC"Restart "$@" 2>/dev/null
 	if (( $? == 127 )); then
-		if isrunning; then
-			countdown 5 Restart
-			Stop Please reconnect in a few seconds
-			Start "$@"
-		else
-			warn "$_NAME: server is not running?"
-			exit 255
-		fi
+		countdown 5 Restarting
+		Stop Please reconnect in a few seconds
+		Start "$@"
 	fi
 }
 

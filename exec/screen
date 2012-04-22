@@ -1,4 +1,4 @@
-# This file is part of newrun, copyright © 2011 M. Kristall
+# This file is part of newrun, copyright © 2011, 2012 M. Kristall
 
 ## Config variables
 # SESSION	session name to use for screen (-S)
@@ -70,16 +70,7 @@ screenStop () {
 		exit 3
 	fi
 	Cmd quit "$(stringify "$@")"
+	screen -q -S "$SESSION" -p "$WINDOW" -X kill
 	forcequit
 	removepid
-}
-
-screenRestart () {
-	if ! _screen_sessionexists; then
-		warn "$_NAME: no such session"
-		exit 3
-	fi
-	countdown 5 Restarting
-	Stop Please reconnect in a few seconds
-	Start "$(stringify "$@")"
 }
