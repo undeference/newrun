@@ -205,6 +205,10 @@ Start () {
 Stop () {
 	"$EXEC"Stop "$@" 2>/dev/null
 	if (( $? == 127 )); then
+		if ! isrunning; then
+			warn "$_NAME: server may not be running"
+			exit 255
+		fi
 		Cmd quit "$(stringify "$@")" 2> /dev/null
 		forcequit
 		removepid
@@ -214,6 +218,10 @@ Stop () {
 Restart () {
 	"$EXEC"Restart "$@" 2>/dev/null
 	if (( $? == 127 )); then
+		if ! isrunning; then
+			warn "$_NAME: server may not be running"
+			exit 255
+		fi
 		countdown 5 Restarting
 		Stop Please reconnect in a few seconds
 		Start "$@"
@@ -221,6 +229,10 @@ Restart () {
 }
 
 Reload () {
+	if ! isrunning; then
+		warn "$_NAME: server may not be running"
+		exit 255
+	fi
 	if [[ "$@" != "" ]]; then
 		Cmd say "$@"
 	fi
