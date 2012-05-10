@@ -1,10 +1,10 @@
 # This file is part of newrun, copyright © 2011 M. Kristall
 
 ## Config variables
-# PIPE		name of the pipe file (something like .tremded_pipe?)
+# PIPEFILE	name of the pipe file (something like .tremded_pipe?)
 
-if [[ "$PIPE" == "" ]]; then
-	warn "$_NAME: PIPE is not set"
+if [[ "$PIPEFILE" == "" ]]; then
+	warn "$_NAME: PIPEFILE is not set"
 	exit 2
 fi
 
