@@ -39,7 +39,7 @@ if [[ "$RCON" == "" ]]; then
 fi
 
 rconCmd () {
-	echo $'\xff\xff\xff\xffrcon '"\"$RCON\" $(stringify $@)" > \
+	echo $'\xff\xff\xff\xffrcon '"$RCON $(stringify $@)" > \
 		"/dev/udp/$ADDRESS/$PORT"
 }
 
