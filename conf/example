@@ -1,4 +1,4 @@
-# This file is part of newrun
+# This file is part of newrun, copyright © 2011 M. Kristall
 
 ###
 # command for reloading game.* that forces pk3 download if pk3s were updated;
@@ -50,7 +50,7 @@ SESSION=tremded
 WINDOW=gpp
 
 ## these settings are used if EXEC=pipe or EXEC=pipehack
-PIPE=$HOMEPATH/$BASENAME/.tremded_pipe
+PIPEFILE=$HOMEPATH/$BASENAME/.tremded_pipe
 
 ## these settings are used if EXEC=pipehack 
 # if set, uses EXECHACK as "executioner" to start/communicate with server
