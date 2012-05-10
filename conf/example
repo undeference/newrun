@@ -24,23 +24,23 @@ ARGS="+exec server.cfg"
 
 ###
 # (mandatory) type of "executioner" to use
-# rcon uses rcon to control the server
+# q3rcon sets up a server to use Quake 3's remote console protocol
 # screen runs the server in a screen session
 # pipe uses a pipe to control the server (if com_pipefile is supported)
 # pipehack emulates com_pipefile support, using a different "executioner"
 EXEC=screen
 
 # type of "executioner" to use for communicating with the server
-# rcon sends commands via rcon (rate limited)
+# q3rcon sends commands via Quake 3's remote console protocol
 # screen enters strings into screen console (slow)
 # pipe uses the pipe specified by com_pipefile
 # (pipehack is identical to pipe)
 COMM=pipe
 
-## these settings are used if EXEC=rcon
+## these settings are used if EXEC=q3rcon
 # name of config with rconPassword; default autogen_server.cfg, autogen.cfg
 CONFIG=server.cfg
-# IP address to send rcon packets to; default 127.0.0.1
+# IP address to send remote console packets to; default 127.0.0.1
 ADDRESS=::1
 
 ## these settings are used if EXEC=screen
