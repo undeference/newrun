@@ -56,15 +56,17 @@ readconfig () {
 	if [[ "$GAMENAME" == "" ]]; then
 		GAMENAME="base"
 	fi
-	if [[ "$EXEC" == "" ]]; then
-		warn "$_NAME: EXEC needs to be specified"
-		exit 2
-	fi
 
-	include "$_EXECPATH/$EXEC"
-	if [[ "$COMM" == "" ]]; then
-		COMM="$EXEC";
+	if [[ "$EXEC" != "" ]]; then
+		include "$_EXECPATH/$EXEC"
 	else
+		EXEC=null
+		if [[ "$COMM" == "" ]]; then
+			warn "$_NAME: EXEC and/or COMM needs to be specified"
+			exit 2
+		fi
+	fi
+	if [[ "$COMM" != "" ]]; then
 		include "$_EXECPATH/$COMM"
 	fi
 }
@@ -190,7 +192,7 @@ Start () {
 		+set fs_game "$GAMENAME"
 	)
 	"$EXEC"StartCmd 2>/dev/null
-	if [[ "$COMM" != "$EXEC" ]]; then
+	if [[ "$COMM" != "" ]]; then
 		"$COMM"StartCmd 2>/dev/null
 	fi
 	"$EXEC"Start "${STARTCMD[@]}" "$@" 2>/dev/null
