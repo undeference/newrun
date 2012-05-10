@@ -32,19 +32,7 @@ else
 	fi
 fi
 
-
-bind () {
-	local do=nothing
-}
-set () {
-	shopt -s nocasematch
-	if [[ "$1" == "rconpassword" ]]; then
-		RCON=$2
-	fi
-	shopt -u nocasematch
-}
-estr="$(grep -i rcon "$cfg")"
-eval "${estr//set?/set }"
+RCON="$(grep -i rconpassword "$cfg" | awk '{ print $3 }')"
 
 if [[ "$RCON" == "" ]]; then
 	warn "$_NAME: no rconpassword detected, things could be broken"
