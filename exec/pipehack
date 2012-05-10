@@ -1,7 +1,7 @@
 # This file is part of newrun, copyright © 2011 M. Kristall
 
 ## Config variables
-# PIPE		name of the pipe file (something like .tremded_pipe?)
+# PIPEFILE	name of the pipe file (something like .tremded_pipe?)
 # EXECHACK	executor to use for communicating with the server
 
 # Use this if you want to send commands using a fifo (pipe file)
