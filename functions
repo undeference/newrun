@@ -1,5 +1,37 @@
 # This file is part of newrun, copyright © 2011, 2012 M. Kristall
 
+preserve () {
+	cat
+}
+
+upper () {
+	tr [a-z] [A-Z]
+}
+
+uc () {
+	echo "$@" | upper
+}
+
+lower () {
+	tr [A-Z] [a-z]
+}
+
+lc () {
+	echo "$@" | lower
+}
+
+gv () {
+	eval "echo \"\$$1\""
+}
+
+sv () {
+	eval "$1=\"\$$2\""
+}
+
+sa () {
+	eval "$1=(\"\${$2[@]}\")"
+}
+
 warn () {
 	echo "$@" #>&2  stderr gets redirected to /dev/null in most places
 }
