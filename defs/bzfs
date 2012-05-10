@@ -1,0 +1,99 @@
+# This file is part of newrun, copyright © 2011, 2012 M. Kristall
+# This is where tremded-specific parts belong
+
+ARGDELIM=" "
+
+# Server to start
+_SERVER="/usr/bin/bzfs"
+
+# this list should only be for required/important command line options, not
+# every recognized command line option which it is now
+ARGUMENTS=(
+# type	config name	command line option	default value
+str	ADMSG		-admsg			""
+str	ADVERTISE	-advertise		""
+bool	AUTOTEAM	-autoTeam
+bool	RANDOM		-b
+str	BAN		-ban			""
+str	BANFILE		-banfile		""
+int	BANTIME		-banTime		300
+bool	CTF		-c
+str	CACHE		-cache			""
+#str	CACHEOUT	-cacheout		""
+file	CONF		-conf			""
+# -cr alone defaults to 5
+int	CTFR		-cr			""
+# -d is cumulative (i.e., -ddd is allowed)
+#bool	DEBUG		-d
+int	DENSITY		-density		""
+bool	DISABLEBOTS	-disableBots
+str	FLAGS		+f			""
+str	RESTRICTFLAGS	-f			""
+bool	FLAGSONBOXES	-fb
+file	BADWORDS	-badwords		""
+bool	FILTERCALLSIGNS	-filterCallsigns
+bool	FILTERCHAT	-filterChat
+bool	FILTERSIMPLE	-filterSimple
+#bool	ONEGAMEONLY	-g
+file	GROUPDB		-groupdb		""
+bool	VARYHEIGHT	-h
+bool	HANDICAP	-handicap
+#bool	HELP		-help
+file	HELPMSG		-helpmsg		""
+str	INTERFACE	-i			""
+bool	JUMPING		-j
+int	LAGDROP		-lagdrop		""
+int	LAGWARN		-lagwarn		""
+file	PLUGIN		-loadplugin		""
+# this is a number or file comma-delimited numbers
+str	MAXPLAYERS	-mp			""
+int	MAXSCORE	-mps			""
+int	MAXSHOTS	-ms			1
+int	MAXTEAMSCORE	-mts			""
+bool	NOMASTERBANLIST	-noMasterBanlist
+int	PORT		-p			""
+file	PASSDB		-passdb			""
+str	PASSWORD	-passwd			""
+str	PIDFILE		-pidfile		""
+#str	POLL		-poll			""
+str	PUBTITLE	-publictitle		""
+str	PUBADDR		-publicaddr		""
+str	PUBLIST		-publiclist		""
+str	PUBKEY		-publickey		""
+bool	NOPING		-q
+bool	RICOCHET	+r
+# "By default, the free-for-all style is  used." But there is no free-for-all
+# style…?
+str	RABBIT		-rabbit			""
+int	RECBUF		-recbuf			""
+bool	RECBUFONLY	-recbufonly
+dir	RECDIR		-recdir			""
+bool	REPLAY		-replay
+str	REPORTFILE	-reportfile		""
+file	REPORTPIPE	-reportpipe		""
+bool	REQUIREUDP	-requireudp
+int	EXTRAFLAGS	+s			""
+int	SUPERFLAGS	-s			""
+bool	ANTIDOTEFLAGS	-sa
+bool	SPAWNONBOXES	-sb
+int	SPAMTIME	-spamtime		""
+int	SPAMWARN	-spamwarn		""
+str	SPEEDFACTOR	-speedtol		1.0
+# can be used multiple times
+str	WELCOMEMESSAGE	-srvmsg			""
+int	BADFLAGSTIME	-st			""
+int	BADFLAGSWINS	-sw			""
+bool	TELEPORTERS	-t
+bool	COUNTDOWN	-time
+bool	COUNTDOWNMANUAL	-timemanual
+bool	TK		-tk
+bool	TKANNOUNCE	-tkannounce
+int	TKKICKPERCENT	-tkkr			""
+str	USERDB		-userdb			""
+file	VARS		-vars			""
+int	VOTEVETOTIME	-vetoTime		20
+str	VOTEPERCENT	-votePercentage		50.1
+int	VOTEREPEATTIME	-voteRepeatTime		""
+file	WORLD		-world			""
+int	WORLDSIZE	-worldsize		""
+)

@@ -1,7 +1,7 @@
-# This file is part of newrun, copyright © 2011 M. Kristall
+# This file is part of newrun, copyright © 2011, 2012 M. Kristall
 
 ## Config variables
-# PIPEFILE	name of the pipe file (something like .tremded_pipe?)
+# PIPEPATH	name of the pipe file (something like .tremded_pipe?)
 # EXECHACK	executor to use for communicating with the server
 
 # Use this if you want to send commands using a fifo (pipe file)
@@ -29,14 +29,14 @@ _pipehack_send () {
 _pipehack_start () {
 	local pid=$PID
 	while true; do
-		if [ ! -p "$pipefile" ]; then
-			mkfifo "$pipefile"
+		if [ ! -p "$PIPEPATH" ]; then
+			mkfifo "$PIPEPATH"
 		fi
-		while read -r x < "$pipefile"; do
+		while read -r x < "$PIPEPATH"; do
 			_pipehack_send "$x"
 			y=($x)
 			y[0]=$(echo ${y[0]} | tr [A-Z] [a-z])
-			if [[ "${y[0]}" == "quit" ]]; then
+			if [[ "${y[0]}" == "$QUIT" ]]; then
 				break 2
 			fi
 		done
@@ -44,7 +44,7 @@ _pipehack_start () {
 			break 1
 		fi
 	done
-	rm "$pipefile"
+	rm "$PIPEPATH"
 	if [[ "$EXECHACK" != "" ]]; then
 		"$EXECHACK"Stop "${x:5}"
 	fi
@@ -69,7 +69,6 @@ pipehackStart () {
 }
 
 pipehackStartCmd () {
-	# prevent pipeStartCmd from being called (don't want com_pipefile set)
 	COMM="$EXEC"
 	if [[ "$EXECHACK" != "" ]]; then
 		"$EXECHACK"StartCmd

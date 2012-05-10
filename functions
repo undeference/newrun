@@ -28,6 +28,10 @@ sv () {
 	eval "$1=\"\$$2\""
 }
 
+ev () {
+	eval "$1=\"$2\""
+}
+
 sa () {
 	eval "$1=(\"\${$2[@]}\")"
 }
@@ -44,49 +48,19 @@ include () {
 }
 
 readconfig () {
-	EXEC=
-	COMM=
-	SERVER=
-	DEDICATED=
-	BASEPATH=
-	HOMEPATH=
-	GAMENAME=
-	ARGS=
-
 	local config="$1"
 	include "$_CONFIGPATH/$config"
+	include "$_DEFPATH/$TYPE"
 
 	local svname="$(basename "$config")"
 	PIDFILE="$_PIDPATH/$svname.pid"
 
-	# set up defaults
 	if [[ "$SERVER" == "" ]]; then
-		SERVER=/usr/local/games/tremulous/tremded.*
+		SERVER="$_SERVER"
 	fi
 	if [ ! -x "$SERVER" ]; then
 		warn "$_NAME: SERVER cannot be used: $SERVER"
 		exit 2
-	fi
-	if [[ "$DEDICATED" == "" ]]; then
-		DEDICATED=1
-		warn "$_NAME: DEDICATED was not set, running as LAN server"
-	fi
-	if [[ "$BASEPATH" == "" ]]; then
-		BASEPATH="/usr/local/games/tremulous"
-	fi
-	if [ ! -d "$BASEPATH" ]; then
-		warn "$_NAME: BASEPATH does not exist: $BASEPATH"
-		exit 2
-	fi
-	if [[ "$HOMEPATH" == "" ]]; then
-		# tremded will create this one
-		HOMEPATH="$HOME/.tremulous"
-	fi
-	if [[ "$PORT" == "" ]]; then
-		PORT=30720
-	fi
-	if [[ "$GAMENAME" == "" ]]; then
-		GAMENAME="base"
 	fi
 
 	if [[ "$EXEC" == "" ]]; then
@@ -100,6 +74,38 @@ readconfig () {
 	if [[ "$COMM" != "$EXEC" ]]; then
 		include "$_EXECPATH/$COMM"
 	fi
+
+
+	case "$CASE" in
+		lower|upper|preserve)
+			;;
+		*)
+			CASE=preserve
+			;;
+	esac
+
+	if [[ "$ARGDELIM" != "" && ! "$UNSAFE" =~ "$ARGDELIM" ]]; then
+		UNSAFE="$UNSAFE$ARGDELIM"
+	fi
+
+	case "$QUOTE" in
+		escape)
+			if [[ "$ESCAPE" == "" ]]; then
+				ESCAPE=\\
+			fi
+			if [[ ! "$UNSAFE" =~ "$ESCAPE" ]]; then
+				UNSAFE="$UNSAFE$ESCAPE"
+			fi
+			;;
+		single)
+			QUOTE="'"
+			;;
+		double|*)
+			QUOTE='"'
+			;;
+	esac
+
+	init
 }
 
 getpid () {
@@ -178,6 +184,124 @@ countdown () {
 	done
 }
 
+stringify () {
+	local str append arg i
+	while (( $# > 0 )); do
+		arg="$1"
+		shift 1
+		if [[ "$QUOTE" == escape ]]; then
+			for (( i = 0; i < ${#arg}; i++ )); do
+				if [[ "${arg:i:1}" =~ ["$UNSAFE"] ]]; then
+					append="$append$ESCAPE${arg:i:1}"
+				else
+					append="$append${arg:i:1}"
+				fi
+			done
+		else
+			if [[ "$arg" =~ ["$UNSAFE"] ]]; then
+				append="$QUOTE$arg$QUOTE"
+			else
+				append="$arg"
+			fi
+		fi
+		if [[ "$str" == "" ]]; then
+			str="$append"
+		else
+			str="$str$ARGDELIM$append"
+		fi
+	done
+	echo "$str"
+}
+
+push () {
+	local arr="$1"
+	shift 1
+	eval "$arr=(\"\${$arr[@]}\" \"\$@\")"
+}
+
+## flags
+F_SKIP=1	# skip
+F_NOARG=2	# no arguments
+F_NOPRE=4	# no PREFIX
+F_NOVAL=8	# no value
+F_NODEF=16	# no default value
+init () {
+	local flags typ varname val arg def opt i
+	for (( i = 0; i < ${#ARGUMENTS[@]}; )); do
+		opt=()
+		flags=0
+		typ="${ARGUMENTS[i++]}"
+		varname="${ARGUMENTS[i++]}"
+		sv val "$varname"
+		if [[ "$val" == "" ]]; then
+			(( flags |= F_SKIP ))
+		fi
+		case "$typ" in
+			req)
+				(( flags |= ( F_NOARG | F_NOPRE | F_NODEF ) ))
+				;;
+			bool)
+				(( flags |= ( F_NOVAL | F_NODEF ) ))
+				if [[ "$val" == "0" ]]; then
+					continue
+				fi
+				;;
+			int)
+				val="$(echo "$val" | tr -d '[\0-/:-\xff]')"
+				if [[ "$val" == "" ]]; then
+					(( flags |= F_SKIP ))
+				fi
+				;;
+			file)
+				if (( !( flags & F_SKIP ) )) && [ ! -f "$val" ];
+				then
+					echo "$val is not a file" >&2
+		#			exit 12
+				fi
+				;;
+			dir)
+				if (( !( flags & F_SKIP ) )) && [ ! -d "$val" ];
+				then
+					echo "$val is not a directory" >&2
+		#			exit 12
+				fi
+				;;
+			str|*)
+				;;
+		esac
+		if (( !( flags & F_NOARG ) )); then
+			arg="${ARGUMENTS[i++]}"
+			if (( !( flags & F_NOPRE ) )); then
+				arg="$PREFIX$arg"
+			fi
+			push opt "$arg"
+		fi
+		if (( !( flags & F_NOVAL ) )); then
+			if (( !( flags & F_NOARG ) )) && [[ "$EQUALS" != "" ]];
+			then
+				# 'x=1 2 3' is probably not safe so val probably
+				# needs to be stringified
+				opt[${#opt[@]} - 1]=\
+					"$arg$EQUALS$(stringify "$val")"
+			else
+				push opt "$val"
+			fi
+			if (( !( flags & F_NODEF ) )); then
+				def="${ARGUMENTS[i++]}"
+				if [[ "$val" == "" ]]; then
+					ev "$varname" "$def"
+				fi
+				if [[ "$val" == "$def" ]]; then
+					(( flags |= F_SKIP ))
+				fi
+			fi
+		fi
+		if (( !( flags & F_SKIP ) )); then
+			push run "${opt[@]}"
+		fi
+	done
+}
+
 Cmd () {
 	"$COMM"Cmd "$@" 2>/dev/null
 	local r=$?
@@ -191,46 +315,16 @@ Cmd () {
 	fi
 }
 
-stringify () {
-	local str append
-	while (( $# > 0 )); do
-		if [[ "$1" =~ [" ;"] ]]; then
-			append="\"$1\""
-		else
-			append=$1
-		fi
-		if [[ "$str" == "" ]]; then
-			str=$append
-		else
-			str="$str $append"
-		fi
-		shift 1
-	done
-	echo "$str"
-}
-
-push () {
-	local arr="$1"
-	shift 1
-	eval "$arr=(\"\${$arr[@]}\" \"\$@\")"
-}
-
 Start () {
-	STARTCMD=(
-		+set dedicated "$DEDICATED"
-		+set net_port "$PORT"
-		+set net_port6 "$PORT"
-		+set fs_basepath "$BASEPATH"
-		+set fs_homepath "$HOMEPATH"
-		+set fs_game "$GAMENAME"
-	)
+	STARTCMD=()
 	"$EXEC"StartCmd 2>/dev/null
 	if [[ "$COMM" != "$EXEC" ]]; then
 		"$COMM"StartCmd 2>/dev/null
 	fi
-	"$EXEC"Start "${STARTCMD[@]}" "$@" 2>/dev/null
+	"$EXEC"Start "${run[@]}" "${STARTCMD[@]}" "$@" 2>/dev/null
 	if (( $? == 127 )); then
-		"$SERVER" "${STARTCMD[@]}" "$@" < /dev/null &> /dev/null &
+		"$SERVER" "${run[@]}" "${STARTCMD[@]}" "$@" \
+			< /dev/null &> /dev/null &
 		PID=$!
 		disown
 		savepid

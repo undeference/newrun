@@ -1,0 +1,106 @@
+# This file is part of newrun, copyright © 2011, 2012 M. Kristall
+# This is where tremded-specific parts belong
+# Ideally these files should not contain very much code, but some of this is
+# necessary
+
+# These characters are not safe and require quoting
+UNSAFE=";"
+ARGDELIM=" "
+
+# Separate key/value pairs on the command line with this character
+EQUALS=
+
+# Prefix command line options with this (e.g., "--")
+PREFIX=+ # note no "set"
+
+# Server to start
+PLATFORM="$(uname | lower)"
+SVDIR=/usr/local/games/tremulous
+HOMEDIR=.tremulous
+case "$PLATFORM" in
+	darwin)
+		HOMEDIR="Library/Application Support/Tremulous";;
+	sunos)
+		SVDIR=/usr/local/share/games/tremulous;;
+esac
+ARCH="$(uname -p)"
+case "$ARCH" in
+	axp)
+		ARCH=alpha;;
+	powerpc)
+		ARCH=ppc;;
+	powerpc64)
+		ARCH=ppc64;;
+	i?86)
+		ARCH=x86;;
+esac
+_SERVER="$SVDIR/tremded.$ARCH"
+
+# Default line options for starting the server
+ARGUMENTS=(
+# type	config name	command line option	default value
+int	HUNKMEGS	com_hunkMegs		128
+int	ZONEMEGS	com_zoneMegs		24
+str	PIPEFILE	com_pipefile		""
+int	DEDICATED	dedicated		1
+str	BASEGAME	fs_basegame		""
+dir	BASEPATH	fs_basepath		"$SVDIR"
+dir	HOMEPATH	fs_homepath		"$HOME/$HOMEDIR"
+str	GAMENAME	fs_game			"base"
+#str	TAG		g_tag			"main"
+#int	JOURNAL		journal			0
+int	NET		net_enabled		1
+str	IP6		net_ip6			"::"
+str	IP		net_ip			"0.0.0.0"
+str	MCAST6ADDR	net_mcast6addr		"ff04::696f:7175:616b:6533"
+str	MCAST6IFACE	net_mcast6iface		"0"
+int	PORT6		net_port6		30720
+int	PORT		net_port		30720
+str	FLATLINE	sv_flatline		"Tremulousdead"
+str	HEARTBEAT	sv_heartbeat		"Tremulous"
+str	CONFIG		exec			""
+str	MAPNAME		map			""
+)
+
+# Whether lexical case of commands is significant
+# lower and upper specify natural case of commands; preserve doesn't change case
+# for comparisons (e.g., with QUIT)
+CASE=lower
+
+# Quoting style: double, single, escape
+QUOTE=double
+
+# Command sent to the server prior to signaling
+# (should be a way to indicate to send a specific signal instead)
+QUIT=quit
+
+# Where (if) the game dumps its pid
+if [ -z "$TMPDIR" ]; then
+	TMPDIR=/tmp
+fi
+DEFAULT_PIDFILE="$TMPDIR/tremulous_server.pid"
+
+PIPEPATH="$HOMEPATH/$GAMENAME/$PIPEFILE"
+if [[ "$HOMEPATH" != "" ]]; then
+	PIPEPATH="$HOMEPATH"
+else
+	PIPEPATH="$HOME/$HOMEDIR"
+fi
+if [[ "$GAMENAME" != "" ]]; then
+	PIPEPATH="$PIPEPATH/$GAMENAME"
+else
+	PIPEPATH="$PIPEPATH/base"
+fi
+PIPEPATH="$PIPEPATH/$PIPEFILE"
+
+Reload () {
+	if [[ "$RELOADCOMMAND" != "" ]]; then
+		Cmp $RELOADCOMMAND
+	elif [[ "$MAPNAME" != "" ]]; then
+		Countdown 5 Restart
+		Cmd map "$MAPNAME"
+	else
+		Stop Please reconnect in a few seconds
+		Start
+	fi
+}

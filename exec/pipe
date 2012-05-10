@@ -1,28 +1,23 @@
-# This file is part of newrun, copyright © 2011 M. Kristall
+# This file is part of newrun, copyright © 2011, 2012 M. Kristall
 
 ## Config variables
-# PIPEFILE	name of the pipe file (something like .tremded_pipe?)
+# PIPEPATH	name of the pipe file. This may be set automatically, e.g., by
+#		setting PIPEFILE with a Tremulous server
 
-if [[ "$PIPEFILE" == "" ]]; then
-	warn "$_NAME: PIPEFILE is not set"
+if [[ "$PIPEPATH" == "" ]]; then
+	warn "$_NAME: PIPEPATH is not set"
 	exit 2
 fi
 
-pipefile="$HOMEPATH/$GAMENAME/$PIPEFILE"
-
 _pipe_available () {
-	isrunning && [ -p "$pipefile" ] && return 0
+	isrunning && [ -p "$PIPEPATH" ] && return 0
 	return 1
 }
 
 pipeCmd () {
 	if _pipe_available; then
-		stringify "$@" > "$pipefile"
+		stringify "$@" > "$PIPEPATH"
 	fi
-}
-
-pipeStartCmd () {
-	push STARTCMD +set com_pipefile "$PIPEFILE"
 }
 
 pipeStop () {

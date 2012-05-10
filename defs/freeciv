@@ -1,0 +1,24 @@
+# This file is part of newrun, copyright © 2011, 2012 M. Kristall
+# This is where freeciv-server-specific parts belong
+
+ARGDELIM=" "
+
+# Prefix command line options with this (e.g., "--")
+PREFIX="--"
+
+# Server to start
+_SERVER="/usr/bin/freeciv-server"
+
+ARGUMENTS=(
+# type	config name	command line option	default value
+str	PROTOCOL	announce		"IPv6"
+bool	AUTH		auth
+str	IP		bind			"::"
+bool	GUESTS		Guests
+str	METASERVER	Metaserv		"http://meta.freeciv.org/metaserver.phtml"
+bool	NEWUSERS	Newusers
+int	PORT		port			2244
+str	CONFIG		read			""
+str	SERVERID	Serverid		""
+bool	META		meta
+)

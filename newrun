@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright © 2011 M. Kristall
+# Copyright © 2011, 2012 M. Kristall
 #
 # This program is free software. You can redistribute it and/or modify it under
 # the terms of version 2 of the GNU General Public License as published by the
@@ -54,14 +54,14 @@ cmd_start () {
 		fi
 		rm -f "$PIDFILE" &> /dev/null
 	fi
-	Start $ARGS "$@"
+	Start "$@"
 	if getpid; then
 		echo "server pid=$PID"
 	fi
 }
 
 cmd_restart () {
-	Restart $ARGS "$@"
+	Restart "$@"
 	if getpid; then
 		echo "server pid=$PID"
 	fi
@@ -78,10 +78,10 @@ shift 1
 # load plugins late
 if [ ! -z "$_PLUGINPATH" ] && [ -d "$_PLUGINPATH" ]; then
 	echo "Loading plugins…"
-	shopt -s nullglob
-	for plugin in "$_PLUGINPATH/"*; do
-		echo "	$(basename "$plugin")"
-		. "$plugin"
+	plugins=($_PLUGINPATH/*)
+	for (( i = 0; i < ${#plugins[@]}; i++ )); do
+		echo "	$(basename "${plugins[i]}")"
+		. "${plugins[i]}"
 	done
 fi
 

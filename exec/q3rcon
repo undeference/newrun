@@ -15,38 +15,46 @@ _rcon_findcfg () {
 	fi
 }
 
-if [[ "$CONFIG" == "" ]]; then
-	_rcon_findcfg "autogen_server.cfg"
-	if [[ "$cfg" == "" ]]; then
-		_rcon_findcfg "autogen.cfg"
+_rcon_get () {
+	if [[ "$CONFIG" == "" ]]; then
+		_rcon_findcfg "autogen_server.cfg"
 		if [[ "$cfg" == "" ]]; then
-			warn "$_NAME: can't find a cfg file to use"
+			_rcon_findcfg "autogen.cfg"
+			if [[ "$cfg" == "" ]]; then
+				warn "$_NAME: can't find a cfg file to use"
+				exit 3
+			fi
+		fi
+	else
+		_rcon_findcfg "$CONFIG"
+		if [[ "$cfg" == "" ]]; then
+			warn "$_NAME: CONFIG does not exist: '$CONFIG'"
 			exit 3
 		fi
 	fi
-else
-	_rcon_findcfg "$CONFIG"
-	if [[ "$cfg" == "" ]]; then
-		warn "$_NAME: CONFIG does not exist: '$CONFIG'"
-		exit 3
+
+	RCON="$(grep -i rconpassword "$cfg" | awk '{ print $3 }')"
+	if [[ "${RCON:0:1}" == '"' ]]; then
+		RCON="${RCON:1:${#RCON} - 2}"
 	fi
-fi
 
-RCON="$(grep -i rconpassword "$cfg" | awk '{ print $3 }')"
-if [[ "${RCON:0:1}" == '"' ]]; then
-	RCON="${RCON:1:${#RCON} - 2}"
-fi
+	if [[ "$RCON" == "" ]]; then
+		warn "$_NAME: no rconpassword detected, things could be broken"
+	fi
+}
 
-if [[ "$RCON" == "" ]]; then
-	warn "$_NAME: no rconpassword detected, things could be broken"
-fi
-
-rconCmd () {
+q3rconCmd () {
+	if [[ "$RCON" == "" ]]; then
+		_rcon_get
+	fi
 	echo $'\xff\xff\xff\xffrcon '"\"$RCON\" $(stringify $@)" > \
 		"/dev/udp/$ADDRESS/$PORT"
 }
 
-rconStartCmd () {
+q3rconStartCmd () {
+	if [[ "$RCON" == "" ]]; then
+		_rcon_get
+	fi
 	if [[ "$RCON" == "" ]]; then
 		RCON="$(uuidgen)"
 		warn "$_NAME: setting rconpassword to $RCON"
@@ -55,7 +63,7 @@ rconStartCmd () {
 	push STARTCMD +set rconPassword "$RCON"
 }
 
-rconStop () {
+q3rconStop () {
 	if isrunning; then
 		Cmd quit "$(stringify "$@")"
 		forcequit
