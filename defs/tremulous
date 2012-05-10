@@ -1,7 +1,9 @@
-# This file is part of newrun, copyright © 2011, 2012 M. Kristall
+# This file is part of newrun, copyright © 2012 M. Kristall
 # This is where tremded-specific parts belong
-# Ideally these files should not contain very much code, but some of this is
-# necessary
+
+# Some command line options actually require "+set" but this whole setup assumes
+# a single command line option per variable is sufficient (which it is not)
+# How to fix?
 
 # These characters are not safe and require quoting
 UNSAFE=";"

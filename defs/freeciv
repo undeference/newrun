@@ -1,4 +1,4 @@
-# This file is part of newrun, copyright © 2011, 2012 M. Kristall
+# This file is part of newrun, copyright © 2012 M. Kristall
 # This is where freeciv-server-specific parts belong
 
 ARGDELIM=" "
