@@ -33,13 +33,16 @@ else
 fi
 
 RCON="$(grep -i rconpassword "$cfg" | awk '{ print $3 }')"
+if [[ "$RCON" =~ \"(.+)\" ]]; then
+	RCON="${BASH_REMATCH[1]}"
+fi
 
 if [[ "$RCON" == "" ]]; then
 	warn "$_NAME: no rconpassword detected, things could be broken"
 fi
 
 rconCmd () {
-	echo $'\xff\xff\xff\xffrcon '"$RCON $(stringify $@)" > \
+	echo $'\xff\xff\xff\xffrcon '"\"$RCON\" $(stringify $@)" > \
 		"/dev/udp/$ADDRESS/$PORT"
 }
 
