@@ -12,8 +12,6 @@ cfg=
 _rcon_findcfg () {
 	if [ -f "$HOMEPATH/$GAMENAME/$1" ]; then
 		cfg="$HOMEPATH/$GAMENAME/$1"
-	elif [ -f "$BASEPATH/$GAMENAME/$1" ]; then
-		cfg="$BASEPATH/$GAMENAME/$1"
 	fi
 }
 
