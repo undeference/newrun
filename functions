@@ -57,16 +57,15 @@ readconfig () {
 		GAMENAME="base"
 	fi
 
-	if [[ "$EXEC" != "" ]]; then
-		include "$_EXECPATH/$EXEC"
-	else
+	if [[ "$EXEC" == "" ]]; then
 		EXEC=null
-		if [[ "$COMM" == "" ]]; then
-			warn "$_NAME: EXEC and/or COMM needs to be specified"
-			exit 2
-		fi
 	fi
-	if [[ "$COMM" != "" ]]; then
+	include "$_EXECPATH/$EXEC"
+
+	if [[ "$COMM" == "" ]]; then
+		COMM="$EXEC"
+	fi
+	if [[ "$COMM" != "$EXEC" ]]; then
 		include "$_EXECPATH/$COMM"
 	fi
 }
@@ -149,10 +148,12 @@ countdown () {
 
 Cmd () {
 	"$COMM"Cmd "$@" 2>/dev/null
-	if (( $? == 127 )); then
+	local r=$?
+	if (( r == 127 )) && [[ "$COMM" != "$EXEC" ]]; then
 		"$EXEC"Cmd "$@" 2>/dev/null
+		r=$?
 	fi
-	if (( $? == 127 )); then
+	if (( r == 127 )); then
 		echo "$_NAME: $COMM does not specify a way to communicate" >&2
 		exit 1
 	fi
@@ -192,7 +193,7 @@ Start () {
 		+set fs_game "$GAMENAME"
 	)
 	"$EXEC"StartCmd 2>/dev/null
-	if [[ "$COMM" != "" ]]; then
+	if [[ "$COMM" != "$EXEC" ]]; then
 		"$COMM"StartCmd 2>/dev/null
 	fi
 	"$EXEC"Start "${STARTCMD[@]}" "$@" 2>/dev/null
