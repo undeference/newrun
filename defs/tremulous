@@ -41,7 +41,7 @@ dir	BASEPATH	"$SVDIR"			set fs_basepath +
 dir	HOMEPATH	"$HOME/$HOMEDIR"		set fs_homepath +
 str	BASEGAME	""				set fs_basegame +
 str	GAMENAME	base				set fs_game +
-#int	JOURNAL		0				set joinal +
+#int	JOURNAL		0				set journal +
 int	HUNKMEGS	128				set com_hunkMegs +
 int	ZONEMEGS	24				set com_zoneMegs +
 str	PIPEFILE	""				set com_pipefile +
