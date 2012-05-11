@@ -12,15 +12,12 @@
 # 255		potential error
 
 ## Config variables
+# TYPE		server type
 # EXEC		(executioner) functions to control the server
+# COMM		(executioner) to communicate with the server
 # SERVER	full path to tremded to execute
 # DEFAULT_PIDFILE
 #		the default pid file used by the server, if applicable
-# DEDICATED	dedicated mode to use
-# BASEPATH	fs_basepath
-# HOMEPATH	fs_homepath
-# GAMENAME	fs_game
-# ARGS		additional arguments to pass to server
 
 ## EXEC functions
 # Cmd		exec a command on the server
@@ -31,6 +28,8 @@
 #	arguments=optional message to send
 # Restart	restart the server
 #	arguments=optional extra arguments to server (after ARGS)
+# Reload	reload server data after an upgrade
+#	arguments=none
 
 _PATH="$(dirname "$0")"
 _NAME="$(basename "$0")"
