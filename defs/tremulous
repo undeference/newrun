@@ -1,10 +1,6 @@
 # This file is part of newrun, copyright © 2012 M. Kristall
 # This is where tremded-specific parts belong
 
-# Some command line options actually require "+set" but this whole setup assumes
-# a single command line option per variable is sufficient (which it is not)
-# How to fix?
-
 # These characters are not safe and require quoting
 UNSAFE=";"
 ARGDELIM=" "
@@ -41,16 +37,21 @@ _SERVER="$SVDIR/tremded.$ARCH"
 # Default line options for starting the server
 ARGUMENTS=(
 # type	config name	command line option	default value
+# Tremulous quotes any arguments that contain ' ', but doesn't check for '\t'
+# Nevertheless, we should be able to generate multiple options for a single
+# variable
+# One way to do that would be along the lines of
+#type	VARIABLE	["default"]	opt0 opt1 opt... optn +
+str	BASEGAME	$'set\t'fs_basegame	""
+dir	BASEPATH	$'set\t'fs_basepath	"$SVDIR"
+dir	HOMEPATH	$'set\t'fs_homepath	"$HOME/$HOMEDIR"
+str	GAMENAME	$'set\t'fs_game		"base"
+#int	JOURNAL		$'set\t'journal		0
 int	HUNKMEGS	com_hunkMegs		128
 int	ZONEMEGS	com_zoneMegs		24
 str	PIPEFILE	com_pipefile		""
 int	DEDICATED	dedicated		1
-str	BASEGAME	fs_basegame		""
-dir	BASEPATH	fs_basepath		"$SVDIR"
-dir	HOMEPATH	fs_homepath		"$HOME/$HOMEDIR"
-str	GAMENAME	fs_game			"base"
 #str	TAG		g_tag			"main"
-#int	JOURNAL		journal			0
 int	NET		net_enabled		1
 str	IP6		net_ip6			"::"
 str	IP		net_ip			"0.0.0.0"
