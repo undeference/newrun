@@ -11,10 +11,10 @@ _SERVER="/usr/bin/freeciv-server"
 
 ARGUMENTS=(
 # type	config name	default value	command line arguments +
-str	PROTOCOL	IPv4		A +
+str	PROTOCOL	""		A +
 bool	AUTH				a +
 str	IP		""		b +
-int	DEBUG		""		d +
+int	DEBUG		0		d +
 bool	GUESTS				G +
 str	METASERVER	http://meta.freeciv.org/metaserver.phtml
 					M +
