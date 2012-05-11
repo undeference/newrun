@@ -11,11 +11,10 @@ _SERVER="/usr/bin/freeciv-server"
 
 ARGUMENTS=(
 # type	config name	default value	command line arguments +
-str	PROTOCOL	IPv6		A +
-#XXX AUTH does not work? Get type=a instead of bool ><
+str	PROTOCOL	IPv4		A +
 bool	AUTH				a +
-str	IP		::		b +
-int	DEBUG		0		d +
+str	IP		""		b +
+int	DEBUG		""		d +
 bool	GUESTS				G +
 str	METASERVER	http://meta.freeciv.org/metaserver.phtml
 					M +
