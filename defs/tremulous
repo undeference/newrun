@@ -107,7 +107,7 @@ countdown () {
 Reload () {
 	Countdown 5 Restart
 	if [[ "$RELOADCOMMAND" != "" ]]; then
-		Cmp $RELOADCOMMAND
+		Cmd $RELOADCOMMAND
 	elif [[ "$MAPNAME" != "" ]]; then
 		Cmd map "$MAPNAME"
 	else
