@@ -22,7 +22,7 @@ pipeCmd () {
 
 pipeStop () {
 	if _pipe_available; then
-		Cmd quit "$(stringify "$@")"
+		Cmd $QUIT "$(stringify "$@")"
 		forcequit
 	else
 		warn "$_NAME: server is not running?"
