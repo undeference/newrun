@@ -171,19 +171,6 @@ forcequit () {
 	fi
 }
 
-countdown () {
-	local i=$1
-	shift 1
-	local s=s
-	for (( ; i > 0; i-- )); do
-		if (( i == 1 )); then
-			s=
-		fi
-		Cmd cp "^$i$@ in $i second$s"
-		sleep 1
-	done
-}
-
 stringify () {
 	local str append arg i
 	while (( $# > 0 )); do
@@ -355,7 +342,7 @@ Stop () {
 			warn "$_NAME: server may not be running"
 			exit 255
 		fi
-		Cmd quit "$(stringify "$@")" 2> /dev/null
+		Cmd $QUIT "$(stringify "$@")" 2> /dev/null
 		forcequit
 		removepid
 	fi
@@ -368,20 +355,11 @@ Restart () {
 			warn "$_NAME: server may not be running"
 			exit 255
 		fi
-		countdown 5 Restarting
 		Stop Please reconnect in a few seconds
 		Start "$@"
 	fi
 }
 
 Reload () {
-	if ! isrunning; then
-		warn "$_NAME: server may not be running"
-		exit 255
-	fi
-	if [[ "$@" != "" ]]; then
-		Cmd say "$@"
-	fi
-	countdown 5 Restart
-	Cmd $RELOADCOMMAND
+	Restart
 }

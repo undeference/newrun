@@ -91,14 +91,26 @@ else
 fi
 PIPEPATH="$PIPEPATH/$PIPEFILE"
 
+countdown () {
+	local i=$1
+	shift 1
+	local s=s
+	for (( ; i > 0; i-- )); do
+		if (( i == 1 )); then
+			s=
+		fi
+		Cmd cp "^$i$@ in $i second$s"
+		sleep 1
+	done
+}
+
 Reload () {
+	Countdown 5 Restart
 	if [[ "$RELOADCOMMAND" != "" ]]; then
 		Cmp $RELOADCOMMAND
 	elif [[ "$MAPNAME" != "" ]]; then
-		Countdown 5 Restart
 		Cmd map "$MAPNAME"
 	else
-		Stop Please reconnect in a few seconds
-		Start
+		Restart
 	fi
 }
