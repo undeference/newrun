@@ -230,6 +230,7 @@ init () {
 	for (( i = 0; i < ${#ARGUMENTS[@]}; )); do
 		opt=()
 		flags=0
+		def=
 		typ="${ARGUMENTS[i++]}"
 		varname="${ARGUMENTS[i++]}"
 		sv val "$varname"
@@ -238,12 +239,12 @@ init () {
 		fi
 		case "$typ" in
 			req)
-				(( flags |= ( F_NOARG | F_NOPRE | F_NODEF ) ))
+				(( flags |= ( F_NOPRE | F_NODEF ) ))
 				;;
 			bool)
 				(( flags |= ( F_NOVAL | F_NODEF ) ))
 				if [[ "$val" == "0" ]]; then
-					continue
+					(( flags |= F_NOARG | F_SKIP ))
 				fi
 				;;
 			int)
@@ -269,33 +270,49 @@ init () {
 			str|*)
 				;;
 		esac
+		# default value
+		if (( !( flags & ( F_NOVAL | F_NODEF ) ) )); then
+			def="${ARGUMENTS[i++]}"
+			if [[ "$val" == "" ]]; then
+				ev "$varname" "$def"
+				val="$def"
+			fi
+			if [[ "$val" == "$def" ]]; then
+				# don't process args/value
+				(( flags |= ( F_SKIP | F_NOARG ) ))
+			fi
+		fi
+		# args
 		if (( !( flags & F_NOARG ) )); then
 			arg="${ARGUMENTS[i++]}"
 			if (( !( flags & F_NOPRE ) )); then
 				arg="$PREFIX$arg"
 			fi
 			push opt "$arg"
-		fi
-		if (( !( flags & F_NOVAL ) )); then
-			if (( !( flags & F_NOARG ) )) && [[ "$EQUALS" != "" ]];
-			then
-				# 'x=1 2 3' is probably not safe so val probably
-				# needs to be stringified
-				opt[${#opt[@]} - 1]=\
-					"$arg$EQUALS$(stringify "$val")"
-			else
-				push opt "$val"
-			fi
-			if (( !( flags & F_NODEF ) )); then
-				def="${ARGUMENTS[i++]}"
-				if [[ "$val" == "" ]]; then
-					ev "$varname" "$def"
+			for (( ; i < ${#ARGUMENTS[@]}; i++ )); do
+				arg="${ARGUMENTS[i]}"
+				if [[ "$arg" == + ]]; then
+					break 1
 				fi
-				if [[ "$val" == "$def" ]]; then
-					(( flags |= F_SKIP ))
+				push opt "$arg"
+			done
+			# value
+			if (( !( flags & F_NOVAL ) )); then
+				if [[ "$EQUALS" != "" ]]; then
+					(( arg=${#opt[@]} - 1 ))
+					opt[arg]="${opt[arg]}$EQUALS$(stringify "$val")"
+				else
+					push opt "$val"
 				fi
 			fi
 		fi
+		for (( ; i < ${#ARGUMENTS[@]}; i++ )); do
+			if [[ "${ARGUMENTS[i]}" == + ]]; then
+				(( i++ ))
+				break
+			fi
+		done
+		# need to add value here
 		if (( !( flags & F_SKIP ) )); then
 			push run "${opt[@]}"
 		fi

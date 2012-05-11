@@ -36,33 +36,28 @@ _SERVER="$SVDIR/tremded.$ARCH"
 
 # Default line options for starting the server
 ARGUMENTS=(
-# type	config name	command line option	default value
-# Tremulous quotes any arguments that contain ' ', but doesn't check for '\t'
-# Nevertheless, we should be able to generate multiple options for a single
-# variable
-# One way to do that would be along the lines of
-#type	VARIABLE	["default"]	opt0 opt1 opt... optn +
-str	BASEGAME	$'set\t'fs_basegame	""
-dir	BASEPATH	$'set\t'fs_basepath	"$SVDIR"
-dir	HOMEPATH	$'set\t'fs_homepath	"$HOME/$HOMEDIR"
-str	GAMENAME	$'set\t'fs_game		"base"
-#int	JOURNAL		$'set\t'journal		0
-int	HUNKMEGS	com_hunkMegs		128
-int	ZONEMEGS	com_zoneMegs		24
-str	PIPEFILE	com_pipefile		""
-int	DEDICATED	dedicated		1
-#str	TAG		g_tag			"main"
-int	NET		net_enabled		1
-str	IP6		net_ip6			"::"
-str	IP		net_ip			"0.0.0.0"
-str	MCAST6ADDR	net_mcast6addr		"ff04::696f:7175:616b:6533"
-str	MCAST6IFACE	net_mcast6iface		"0"
-int	PORT6		net_port6		30720
-int	PORT		net_port		30720
-str	FLATLINE	sv_flatline		"Tremulousdead"
-str	HEARTBEAT	sv_heartbeat		"Tremulous"
-str	CONFIG		exec			""
-str	MAPNAME		map			""
+# type	config name	default value			command line arguments +
+dir	BASEPATH	"$SVDIR"			set fs_basepath +
+dir	HOMEPATH	"$HOME/$HOMEDIR"		set fs_homepath +
+str	BASEGAME	""				set fs_basegame +
+str	GAMENAME	base				set fs_game +
+#int	JOURNAL		0				set joinal +
+int	HUNKMEGS	128				set com_hunkMegs +
+int	ZONEMEGS	24				set com_zoneMegs +
+str	PIPEFILE	""				set com_pipefile +
+int	DEDICATED	1				set dedicated +
+#str	TAG		main				set g_tag +
+int	NET		1				set net_enabled +
+str	IP6		::				set net_ip6 +
+str	IP		0.0.0.0				set net_ip +
+str	MCAST6ADDR	ff04::696f:7175:616b:6533	set net_mcast6addr +
+str	MCAST6IFACE	0				set net_mcast6iface +
+int	PORT6		30720				set net_port6 +
+int	PORT		30720				set net_port +
+#str	FLATLINE	Tremulousdead			set sv_flatline +
+#str	HEARTBEAT	Tremulous			set sv_heartbeat +
+str	CONFIG		""				exec +
+str	MAPNAME		""				map
 )
 
 # Whether lexical case of commands is significant
