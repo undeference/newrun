@@ -1,58 +1,168 @@
-# This file is part of newrun, copyright © 2011 M. Kristall
+# This file is part of newrun, copyright © 2011, 2012 M. Kristall
 
-###
-# command for reloading game.* that forces pk3 download if pk3s were updated;
-# default "map tremor"
-RELOADCOMMAND="map nexus6"
+################################################################################
+#### Executors
+# EXEC is set to the EXECutor
+# COMM can be set to override the executor's COMMunications (e.g., "exec")
 
-###
-# path to tremded; default /usr/local/games/tremulous/tremded.x86
+## null executor
+# the server is started in the background with std* fds redirected to /dev/null
+# the server is stopped with signals
+# "exec" is not supported
+#EXEC=null
+
+## pipe executor
+# pipe is equivalent to null in terms of starting the server
+# the $QUIT command will first be sent to the server before signalling
+# "exec" is handled by writing to a fifo
+#EXEC=pipe
+#COMM=pipe
+
+## q3rcon executor
+# q3rcon is equivalent to null in terms of starting/stopping the server
+# "exec" is handled using the Quake 3 remote console protocol
+#EXEC=q3rcon
+#COMM=q3rcon
+# packets will be sent here
+#ADDRESS=10.9.8.7
+#PORT=7734
+# rconpassword is extracted from CONFIG
+#CONFIG=server.cfg
+
+## screen executor
+# the server is started in in the given WINDOW in the given screen SESSION
+# the $QUIT command is first sent, then screen is told to kill the server, then
+# signalling
+# "exec" is handled by writing to the screen window, which is slow, so use a
+# different COMM if you can
+#EXEC=screen
+#COMM=screen
+# screen session to use (default=server)
+#SESSION=server
+# window in the specified session to use (no default; this must be specified)
+#WINDOW=window
+
+## pipehack executor
+# proxies "pipe"d messages to a different executor (COMM will be set to pipe)
+#EXEC=pipehack
+# other executor to use (default is to pipe directly into the server's stdin)
+#EXECHACK=
+################################################################################
+
+################################################################################
+#### Example Tremulous (gpp) server
+# Path to server binary
+# If unset, the (non-gpp) default for your system is used
 SERVER=/usr/local/games/tremulous/tremded-gpp.x86
-# fs_basepath; default /usr/local/games/tremulous
+# Server TYPEs currently supported: bzfs, freeciv, tremulous
+TYPE=tremulous
+# Least significant location to load maps and such from
+# If unset, the default location for your system is used
 BASEPATH=/usr/local/games/tremulous
-# fs_homepath; default $HOME/.tremulous
+# Location of maps and such in your home directory
+# If unset, the default location for your system is used
 HOMEPATH=$HOME/.tremulous
-# fs_basegame; default base
-BASENAME=gpp
-# dedicated; default 1
+# Name of the mod this server is based on
+# This is left unset by default
+BASEGAME=base
+# Name of this mod
+# If unset, base will be used
+GAMENAME=gpp
+# Size of hunk memory in megabytes
+# If unset, the default of 128 is used (which is a bit excessive for a server)
+HUNKMEGS=64
+# Size of zone memory in megabytes
+# If unset, the default of 24 is used
+ZONEMEGS=24
+# Name of the server's fifo, if applicable (only useful with a pipe "executor")
+# If unset, this will not be used
+PIPEFILE=.tremded_pipe	# tremAdminBot's default
+# 1 is for lan play (default), 2 is for public play
 DEDICATED=2
-# net_port, net_port6; default 30720
-PORT=30720
 
-# additional arguments to pass to tremded
-ARGS="+exec server.cfg"
+## Networking
+# Bitmask for networking support (add up numbers for the preferred options)
+# 0 = networking completely disabled
+# 1	support IPv4
+# 2	support IPv6
+# 4	prioritise IPv6 (if the master server has both IPv4 and IPv6 addresses)
+# 8	disable IPv6 multicast support
+# This defaults to 1 (only IPv4 enabled)
+NET=7
 
-###
-# (mandatory) type of "executioner" to use
-# q3rcon sets up a server to use Quake 3's remote console protocol
-# screen runs the server in a screen session
-# pipe uses a pipe to control the server (if com_pipefile is supported)
-# pipehack emulates com_pipefile support, using a different "executioner"
-EXEC=screen
+## IPv4 networking
+# IPv4 address to bind to
+# Defaults to 0.0.0.0 (all available IPv4 addresses)
+IP=10.9.8.7
+# Port to listen on
+# Defaults to 30720
+PORT=7734
 
-# type of "executioner" to use for communicating with the server
-# q3rcon sends commands via Quake 3's remote console protocol
-# screen enters strings into screen console (slow)
-# pipe uses the pipe specified by com_pipefile
-# (pipehack is identical to pipe)
-COMM=pipe
+## IPv6 networking
+# IPv6 address to bind to (if NET allows IPv6)
+# Defaults to :: (all available IPv6 addresses)
+IP6=::10.9.8.7
+# Defaults to 30720
+PORT6=7734
+# Multicast IPv6 address to use
+# Defaults to ff04::696f:7175:616b:6533
+MCAST6ADDR=ff07::205
+# Interface to use for multicast
+MCAST6IFACE=eth0
 
-## these settings are used if EXEC=q3rcon
-# name of config with rconPassword; default autogen_server.cfg, autogen.cfg
+# Configuration file to execute when starting the server
 CONFIG=server.cfg
-# IP address to send remote console packets to; default 127.0.0.1
-ADDRESS=::1
+# Map to start when starting the server
+MAPNAME=atcs3
 
-## these settings are used if EXEC=screen
-# name of the screen session to use; default server
-SESSION=tremded
-# (mandatory) name of the screen window to use
-WINDOW=gpp
+# Alternative command to run when the "reload" command is used
+# If unset, "map $MAPNAME" will be used or the server will restart
+RELOADCMD=advanceMapRotation
+################################################################################
 
-## these settings are used if EXEC=pipe or EXEC=pipehack
-PIPEFILE=$HOMEPATH/$BASENAME/.tremded_pipe
+################################################################################
+#### Example Freeciv server
+TYPE=freeciv
+# Server binary
+# Default: /usr/bin/freeciv-server
+SERVER=/usr/bin/freeciv-server
+# Debug level: 0 (fatals), 1 (errors), 2 (normal messages), 3 (verbose messages)
+DEBUG=0
+# What protocol to use for announcing games on a LAN: none, IPv4, IPv6
+PROTOCOL=IPv6
+# What address to bind to
+IP=::10.9.8.7
+# What port to bind to
+# Default: 2244
+PORT=7734
+# Only allow registered players
+AUTH=1
+# Allow "guest" authentication when AUTH=1?
+GUESTS=1
+# Allow new users to register?
+NEWUSERS=1
+# Advertise on the metaserver?
+META=1
+# Metaserver to use
+# Default: http://meta.freeciv.org/metaserver.phtml
+METASERVER=http://[::10.9.8.7]/mymetaserver
+# Server ID
+SERVERID=myfree
+# Log file for player rankings
+RANKLOG=ranking.log
+# Configuration file to execute when starting the server
+CONFIG=server.cfg
+################################################################################
 
-## these settings are used if EXEC=pipehack 
-# if set, uses EXECHACK as "executioner" to start/communicate with server
-# otherwise, pipes commands directly to server
-EXECHACK=
+################################################################################
+#### Example BZFlag server
+# * indicates that a corresponding option can be used multiple times (e.g., in
+# the file specified by CONF) but not here
+TYPE=bzfs
+# Server binary
+# Default: /usr/bin/bzfs
+SERVER=/usr/bin/bzfs
+# Ideally specify command line options to bzfs in this file instead
+# See http://wiki.bzflag.org/Sample_conf for a sample
+#CONF=
+################################################################################
