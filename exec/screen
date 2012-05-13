@@ -35,7 +35,7 @@ screenCmd () {
 	# either we exec their command prematurely or we try to overwrite it
 	# prematurely execing a command could be dangerous
 	local x=$'\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b'
-	screen -q -S "$SESSION" -p "$WINDOW" -X stuff "$x$@"$'\r' #&> /dev/null
+	screen -q -S "$SESSION" -p "$WINDOW" -X stuff "$x$*"$'\r' #&> /dev/null
 }
 
 screenStart () {
