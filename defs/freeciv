@@ -25,3 +25,5 @@ str	RANKLOG		""		R +
 str	CONFIG		""		r +
 str	SERVERID	""		S +
 )
+
+QUIT=quit
