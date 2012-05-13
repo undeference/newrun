@@ -1,0 +1,113 @@
+# This file is part of newrun, copyright © 2012 M. Kristall
+# This is where Quake 3-specific parts belong
+
+# These characters are not safe and require quoting
+UNSAFE=";"
+ARGDELIM=" "
+
+# Separate key/value pairs on the command line with this character
+EQUALS=
+
+# Prefix command line options with this (e.g., "--")
+PREFIX=+ # note no "set"
+
+# Server to start
+PLATFORM="$(uname | lower)"
+SVDIR=/usr/local/games/quake3
+HOMEDIR=.q3a
+case "$PLATFORM" in
+	darwin)
+		HOMEDIR="Library/Application Support/q3a";;
+	sunos)
+		SVDIR=/usr/local/share/games/quake3;;
+esac
+ARCH="$(uname -p)"
+case "$ARCH" in
+	axp)
+		ARCH=alpha;;
+	powerpc)
+		ARCH=ppc;;
+	powerpc64)
+		ARCH=ppc64;;
+	i?86)
+		ARCH=x86;;
+esac
+_SERVER="$SVDIR/ioq3ded.$ARCH"
+
+# Default line options for starting the server
+ARGUMENTS=(
+# type	config name	default value			command line arguments +
+dir	BASEPATH	"$SVDIR"			set fs_basepath +
+dir	HOMEPATH	"$HOME/$HOMEDIR"		set fs_homepath +
+str	BASEGAME	""				set fs_basegame +
+str	GAMENAME	""				set fs_game +
+int	JOURNAL		0				set journal +
+int	HUNKMEGS	64				set com_hunkMegs +
+int	ZONEMEGS	24				set com_zoneMegs +
+str	PIPEFILE	""				set com_pipefile +
+int	DEDICATED	1				set dedicated +
+int	NET		1				set net_enabled +
+str	IP6		::				set net_ip6 +
+str	IP		0.0.0.0				set net_ip +
+str	MCAST6ADDR	ff04::696f:7175:616b:6533	set net_mcast6addr +
+str	MCAST6IFACE	""				set net_mcast6iface +
+int	PORT6		27960				set net_port6 +
+int	PORT		27960				set net_port +
+str	CONFIG		""				exec +
+str	MAPNAME		""				map
+)
+
+# Whether lexical case of commands is significant
+# lower and upper specify natural case of commands; preserve doesn't change case
+# for comparisons (e.g., with QUIT)
+CASE=lower
+
+# Quoting style: double, single, escape
+QUOTE=double
+
+# Command sent to the server prior to signaling
+# (should be a way to indicate to send a specific signal instead)
+QUIT=quit
+
+# Where (if) the game dumps its pid
+if [ -z "$TMPDIR" ]; then
+	TMPDIR=/tmp
+fi
+DEFAULT_PIDFILE="$TMPDIR/ioq3_server.pid"
+
+PIPEPATH="$HOMEPATH/$GAMENAME/$PIPEFILE"
+if [[ "$HOMEPATH" != "" ]]; then
+	PIPEPATH="$HOMEPATH"
+else
+	PIPEPATH="$HOME/$HOMEDIR"
+fi
+if [[ "$GAMENAME" != "" ]]; then
+	PIPEPATH="$PIPEPATH/$GAMENAME"
+else
+	PIPEPATH="$PIPEPATH/baseq3"
+fi
+PIPEPATH="$PIPEPATH/$PIPEFILE"
+
+countdown () {
+	local i=$1
+	shift 1
+	local s=s
+	for (( ; i > 0; i-- )); do
+		if (( i == 1 )); then
+			s=
+		fi
+		Cmd cp "^$i$@ in $i second$s"
+		sleep 1
+	done
+}
+
+Reload () {
+	Countdown 5 Restart
+	if [[ "$RELOADCOMMAND" != "" ]]; then
+		Cmd $RELOADCOMMAND
+	elif [[ "$MAPNAME" != "" ]]; then
+		Cmd map "$MAPNAME"
+	else
+		Restart
+	fi
+}
