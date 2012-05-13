@@ -51,7 +51,7 @@ int	NET		1				set net_enabled +
 str	IP6		::				set net_ip6 +
 str	IP		0.0.0.0				set net_ip +
 str	MCAST6ADDR	ff04::696f:7175:616b:6533	set net_mcast6addr +
-str	MCAST6IFACE	0				set net_mcast6iface +
+str	MCAST6IFACE	""				set net_mcast6iface +
 int	PORT6		30720				set net_port6 +
 int	PORT		30720				set net_port +
 #str	FLATLINE	Tremulousdead			set sv_flatline +
