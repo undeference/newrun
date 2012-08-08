@@ -22,14 +22,14 @@ _rcon_get () {
 			_rcon_findcfg "autogen.cfg"
 			if [[ "$cfg" == "" ]]; then
 				warn "$_NAME: can't find a cfg file to use"
-				exit 3
+				exit 5
 			fi
 		fi
 	else
 		_rcon_findcfg "$CONFIG"
 		if [[ "$cfg" == "" ]]; then
 			warn "$_NAME: CONFIG does not exist: '$CONFIG'"
-			exit 3
+			exit 5
 		fi
 	fi
 
@@ -69,7 +69,7 @@ q3rconStop () {
 		forcequit
 	else
 		warn "$_NAME: server is not running?"
-		exit 255
+		exit 125
 	fi
 	removepid
 }

@@ -6,10 +6,10 @@
 # Free Software Foundation.
 
 ## Exit statuses
-# 1		no or invalid config
-# 2		config error
-# 3		executioner error
-# 255		potential error
+# 3		no or invalid config
+# 4		config error
+# 5		executioner error
+# 125		potential error
 
 ## Config variables
 # TYPE		server type
@@ -41,7 +41,7 @@ shift 1
 
 if [[ "$config" == "" ]]; then
 	warn "$_NAME config cmd [args]"
-	exit 1
+	exit 3
 fi
 
 cmds=()
@@ -49,7 +49,7 @@ cmd_start () {
 	if getpid; then
 		if isrunning; then
 			warn "$_NAME: server already running pid=$PID"
-			exit 255
+			exit 125
 		fi
 		rm -f "$PIDFILE" &> /dev/null
 	fi
@@ -99,4 +99,4 @@ for (( i = 0; i < ${#cmds[@]}; i += 2 )); do
 done
 
 warn "$_NAME $config $err [args]"
-exit 255
+exit 125

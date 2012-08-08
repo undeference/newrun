@@ -6,7 +6,7 @@
 
 if [[ "$PIPEPATH" == "" ]]; then
 	warn "$_NAME: PIPEPATH is not set"
-	exit 2
+	exit 4
 fi
 
 _pipe_available () {
@@ -26,7 +26,7 @@ pipeStop () {
 		forcequit
 	else
 		warn "$_NAME: server is not running?"
-		exit 255
+		exit 125
 	fi
 	removepid
 }

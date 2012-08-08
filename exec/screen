@@ -11,7 +11,7 @@ if [[ "$SESSION" == "" ]]; then
 fi
 if [[ "$WINDOW" == "" ]]; then
 	warn "$_NAME: WINDOW needs to be set for now"
-	exit 2
+	exit 4
 fi
 if [[ "$WINDOW" =~ ^[0-9]+$ ]]; then
 	warn "$_NAME: WINDOW is numeric so we might not get what we want"
@@ -31,7 +31,7 @@ _screen_sessionexists () {
 screenCmd () {
 	if ! _screen_sessionexists; then
 		warn "$_NAME: no such session"
-		exit 3
+		exit 5
 	fi
 	# if someone started typing something before we "stuff", our text gets
 	# prepended onto theirs
@@ -47,7 +47,7 @@ screenStart () {
 	if ! _screen_sessionexists; then
 		if ! screen -q -S "$SESSION" -d -m &> /dev/null; then
 			warn "$_NAME: could not create session '$SESSION'"
-			exit 3
+			exit 5
 		fi
 		sleep 1
 	fi
@@ -60,7 +60,7 @@ screenStart () {
 	pidfilehack
 	if (( PID == 0 )); then
 		warn "$_NAME: server may not be running"
-		exit 255
+		exit 125
 	fi
 	if (( PID < 0 )); then
 		warn "$_NAME: could not reliably determine server's pid"
@@ -72,7 +72,7 @@ screenStart () {
 screenStop () {
 	if ! _screen_sessionexists; then
 		warn "$_NAME: no such session"
-		exit 3
+		exit 5
 	fi
 	Cmd $QUIT "$(stringify "$@")"
 	screen -q -S "$SESSION" -p "$WINDOW" -X kill

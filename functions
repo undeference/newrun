@@ -43,7 +43,7 @@ warn () {
 include () {
 	if ! . "$1" 2> /dev/null; then
 		warn "$_NAME: could not exec '$1'"
-		exit 1
+		exit 3
 	fi
 }
 
@@ -60,7 +60,7 @@ readconfig () {
 	fi
 	if [ ! -x "$SERVER" ]; then
 		warn "$_NAME: SERVER cannot be used: $SERVER"
-		exit 2
+		exit 4
 	fi
 
 	if [[ "$EXEC" == "" ]]; then
@@ -244,14 +244,14 @@ init () {
 				if (( !( flags & F_SKIP ) )) && [ ! -f "$val" ];
 				then
 					echo "$val is not a file" >&2
-		#			exit 12
+		#			exit 4
 				fi
 				;;
 			dir)
 				if (( !( flags & F_SKIP ) )) && [ ! -d "$val" ];
 				then
 					echo "$val is not a directory" >&2
-		#			exit 12
+		#			exit 4
 				fi
 				;;
 			str|*)
@@ -315,7 +315,7 @@ Cmd () {
 	fi
 	if (( r == 127 )); then
 		echo "$_NAME: $COMM does not specify a way to communicate" >&2
-		exit 1
+		exit 3
 	fi
 }
 
@@ -340,7 +340,7 @@ Stop () {
 	if (( $? == 127 )); then
 		if ! isrunning; then
 			warn "$_NAME: server may not be running"
-			exit 255
+			exit 125
 		fi
 		Cmd $QUIT "$(stringify "$@")" 2> /dev/null
 		forcequit
@@ -353,7 +353,7 @@ Restart () {
 	if (( $? == 127 )); then
 		if ! isrunning; then
 			warn "$_NAME: server may not be running"
-			exit 255
+			exit 125
 		fi
 		Stop Please reconnect in a few seconds
 		Start "$@"

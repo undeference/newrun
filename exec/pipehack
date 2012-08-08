@@ -5,11 +5,10 @@
 # EXECHACK	executor to use for communicating with the server
 
 # Use this if you want to send commands using a fifo (pipe file)
-# 
 
 if [[ "$EXEC" != "pipehack" ]]; then
 	warn "$_NAME: COMM=pipehack is not valid"
-	exit 255
+	exit 125
 fi
 
 if [[ "$EXECHACK" != "" ]]; then
