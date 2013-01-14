@@ -332,6 +332,7 @@ Cmd () {
 
 Start () {
 	STARTCMD=()
+	"$TYPE"StartCmd 2>/dev/null
 	"$EXEC"StartCmd 2>/dev/null
 	if [[ "$COMM" != "$EXEC" ]]; then
 		"$COMM"StartCmd 2>/dev/null
