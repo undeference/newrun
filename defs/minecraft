@@ -1,0 +1,41 @@
+# This file is part of newrun, copyright © 2013 M. Kristall
+#
+# This program is free software. You can redistribute it and/or modify it under
+# the terms of version 2 of the GNU General Public License (GPL) as published by
+# the Free Software Foundation.
+#
+# This program is distributed WITHOUT ANY WARRANTY; without even the implied
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GPL
+# for more details.
+#
+# You should have received a copy of the GPL with this distribution. If not,
+# see <http://www.gnu.org/licenses/>.
+
+# This is where Minecraft-specific parts belong
+
+_JAVA=java
+_SERVER=minecraft_server.jar
+
+ARGDELIM=" "
+QUOTE=double
+QUIT=stop
+
+ARGUMENTS=(
+# type	config name	default value	command line arguments +
+
+)
+
+minecraftStartCmd () {
+	unshift run $JAVAARGS -jar "$SERVER"
+	push STARTCMD $ARGS
+	if [ -z "$JAVA" ]; then
+		SERVER="$_JAVA"
+	else
+		SERVER="$JAVA"
+	fi
+	warn "Fixed up run=${run[@]} STARTCMD=${STARTCMD[@]} SERVER=$SERVER"
+}
+
+Reload () {
+	Cmd reload
+}

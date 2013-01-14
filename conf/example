@@ -1,4 +1,4 @@
-# This file is part of newrun, copyright © 2011, 2012 M. Kristall
+# This file is part of newrun, copyright © 2011-2013 M. Kristall
 
 ################################################################################
 #### Executors
@@ -48,6 +48,7 @@
 # other executor to use (default is to pipe directly into the server's stdin)
 #EXECHACK=
 ################################################################################
+
 
 ################################################################################
 #### Example Tremulous (gpp) server
@@ -120,6 +121,7 @@ MAPNAME=atcs3
 RELOADCMD=advanceMapRotation
 ################################################################################
 
+
 ################################################################################
 #### Example Freeciv server
 TYPE=freeciv
@@ -154,6 +156,7 @@ RANKLOG=ranking.log
 CONFIG=server.cfg
 ################################################################################
 
+
 ################################################################################
 #### Example BZFlag server
 # * indicates that a corresponding option can be used multiple times (e.g., in
@@ -165,4 +168,20 @@ SERVER=/usr/bin/bzfs
 # Ideally specify command line options to bzfs in this file instead
 # See http://wiki.bzflag.org/Sample_conf for a sample
 #CONF=
+################################################################################
+
+
+################################################################################
+#### Example Minecraft server
+TYPE=minecraft
+# Path to java
+# Default: java
+JAVA=java
+# Extra arguments to java (no default value)
+JAVAARGS="-Xms1024M -Xmx1024M"
+# Path to server jar
+# Default: minecraft_server.jar
+SERVER=minecraft_server.jar
+# Extra arguments to the server (no default value)
+ARGS="-o true nogui"
 ################################################################################
