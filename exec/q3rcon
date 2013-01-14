@@ -71,7 +71,7 @@ q3rconStartCmd () {
 		warn "$_NAME: setting rconpassword to $RCON"
 		echo "seta rconPassword \"$RCON\"" >> "$cfg"
 	fi
-	push STARTCMD +set rconPassword "$RCON"
+	STARTCMD+=(+set rconPassword "$RCON")
 }
 
 q3rconStop () {

@@ -1,4 +1,4 @@
-push cmds hi cmd_hi
+cmds+=(hi cmd_hi)
 cmd_hi () {
 	(( rand=RANDOM % 66 ))
 	case $rand in

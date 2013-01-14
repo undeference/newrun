@@ -72,11 +72,11 @@ cmd_restart () {
 		echo "server pid=$PID"
 	fi
 }
-push cmds start cmd_start
-push cmds restart cmd_restart
-push cmds stop Stop
-push cmds reload Reload
-push cmds exec Cmd
+cmds+=(start cmd_start)
+cmds+=(restart cmd_restart)
+cmds+=(stop Stop)
+cmds+=(reload Reload)
+cmds+=(exec Cmd)
 
 cmd="$1"
 shift 1

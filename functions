@@ -217,12 +217,6 @@ unshift () {
 	eval "$arr=(\"\$@\" \"\${$arr[@]}\")"
 }
 
-push () {
-	local arr="$1"
-	shift 1
-	eval "$arr=(\"\${$arr[@]}\" \"\$@\")"
-}
-
 ## flags
 F_SKIP=1	# skip
 F_NOARG=2	# no arguments
@@ -292,13 +286,13 @@ init () {
 			if (( !( flags & F_NOPRE ) )); then
 				arg="$PREFIX$arg"
 			fi
-			push opt "$arg"
+			opt+=("$arg")
 			for (( ; i < ${#ARGUMENTS[@]}; i++ )); do
 				arg="${ARGUMENTS[i]}"
 				if [[ "$arg" == + ]]; then
 					break 1
 				fi
-				push opt "$arg"
+				opt+=("$arg")
 			done
 			# value
 			if (( !( flags & F_NOVAL ) )); then
@@ -306,7 +300,7 @@ init () {
 					(( arg=${#opt[@]} - 1 ))
 					opt[arg]="${opt[arg]}$EQUALS$(stringify "$val")"
 				else
-					push opt "$val"
+					opt+=("$val")
 				fi
 			fi
 		fi
@@ -318,7 +312,7 @@ init () {
 		done
 		# need to add value here
 		if (( !( flags & F_SKIP ) )); then
-			push run "${opt[@]}"
+			run+=("${opt[@]}")
 		fi
 	done
 }
