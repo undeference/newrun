@@ -211,6 +211,12 @@ stringify () {
 	echo "$str"
 }
 
+unshift () {
+	local arr="$1"
+	shift 1
+	eval "$arr=(\"\$@\" \"\${$arr[@]}\")"
+}
+
 push () {
 	local arr="$1"
 	shift 1
