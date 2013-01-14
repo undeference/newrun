@@ -13,27 +13,21 @@
 
 # This is where Minecraft-specific parts belong
 
-_JAVA=java
-_SERVER=minecraft_server.jar
+_SERVER="$(which java)"
+_JAR=minecraft_server.jar
 
 ARGDELIM=" "
 QUOTE=double
 QUIT=stop
 
-ARGUMENTS=(
-# type	config name	default value	command line arguments +
-
-)
+ARGUMENTS=()
 
 minecraftStartCmd () {
-	unshift run $JAVAARGS -jar "$SERVER"
-	push STARTCMD $ARGS
-	if [ -z "$JAVA" ]; then
-		SERVER="$_JAVA"
+	unshift run $JAVAARGS -jar
+	if [ -z "$_JAR" ]; then
+		JAR="$_JAR"
 	else
-		SERVER="$JAVA"
-	fi
-	warn "Fixed up run=${run[@]} STARTCMD=${STARTCMD[@]} SERVER=$SERVER"
+	push STARTCMD "$JAR" $ARGS
 }
 
 Reload () {

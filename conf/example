@@ -175,13 +175,13 @@ SERVER=/usr/bin/bzfs
 #### Example Minecraft server
 TYPE=minecraft
 # Path to java
-# Default: java
-JAVA=java
+# Defaults to your system-wide java installation (must be full path)
+SERVER=/usr/bin/java
 # Extra arguments to java (no default value)
 JAVAARGS="-Xms1024M -Xmx1024M"
 # Path to server jar
 # Default: minecraft_server.jar
-SERVER=minecraft_server.jar
+JAR=minecraft_server.jar
 # Extra arguments to the server (no default value)
 ARGS="-o true nogui"
 ################################################################################
