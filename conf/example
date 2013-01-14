@@ -30,7 +30,7 @@
 #CONFIG=server.cfg
 
 ## screen executor
-# the server is started in in the given WINDOW in the given screen SESSION
+# the server is started in the given WINDOW in the given screen SESSION
 # the $QUIT command is first sent, then screen is told to kill the server, then
 # signalling
 # "exec" is handled by writing to the screen window, which is slow, so use a
