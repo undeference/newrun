@@ -97,11 +97,11 @@ else
 	PIPEPATH="$HOME/$HOMEDIR"
 fi
 if [[ "$GAMENAME" != "" ]]; then
-	PIPEPATH="$PIPEPATH/$GAMENAME"
+	PIPEPATH+="/$GAMENAME"
 else
-	PIPEPATH="$PIPEPATH/base"
+	PIPEPATH+="/base"
 fi
-PIPEPATH="$PIPEPATH/$PIPEFILE"
+PIPEPATH+="/$PIPEFILE"
 
 countdown () {
 	local i=$1

@@ -14,7 +14,7 @@
 
 name="$(basename "$PWD")"
 version="$(git log -1 --format=%h)"
-name="$name-$version"
+name+="-$version"
 archive="$name.tar.bz2"
 if [ -f "$archive" ]; then
 	echo "$archive is already ready"

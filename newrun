@@ -94,7 +94,7 @@ fi
 err=
 for (( i = 0; i < ${#cmds[@]}; i += 2 )); do
 	if (( i > 0 )); then
-		err="$err|${cmds[i]}"
+		err+="|${cmds[i]}"
 	else
 		err="${cmds[i]}"
 	fi

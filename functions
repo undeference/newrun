@@ -190,9 +190,9 @@ stringify () {
 		if [[ "$QUOTE" == escape ]]; then
 			for (( i = 0; i < ${#arg}; i++ )); do
 				if [[ "${arg:i:1}" =~ ["$UNSAFE"] ]]; then
-					append="$append$ESCAPE${arg:i:1}"
+					append+="$ESCAPE${arg:i:1}"
 				else
-					append="$append${arg:i:1}"
+					append+="${arg:i:1}"
 				fi
 			done
 		else
