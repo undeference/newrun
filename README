@@ -4,7 +4,7 @@ newrun is meant for controlling game servers
 
 Getting started
 1. Pick a good place to put the important files. The files "configuration" and
-   "functions" need to be in the same directory as the file server. The
+   "functions" need to be in the same directory as the file "newrun". The
    directories "conf", "exec", and "defs" can be anywhere as long as you update
    the file "configuration" appropriately
 2. Make a new config for your server in "conf". The included example config
