@@ -1,4 +1,4 @@
-# This file is part of newrun, copyright © 2011, 2012 M. Kristall
+# This file is part of newrun, copyright © 2011-2013 M. Kristall
 #
 # This program is free software. You can redistribute it and/or modify it under
 # the terms of version 2 of the GNU General Public License (GPL) as published by
@@ -29,22 +29,6 @@ lower () {
 
 lc () {
 	echo "$@" | lower
-}
-
-gv () {
-	eval "echo \"\$$1\""
-}
-
-sv () {
-	eval "$1=\"\$$2\""
-}
-
-ev () {
-	eval "$1=\"$2\""
-}
-
-sa () {
-	eval "$1=(\"\${$2[@]}\")"
 }
 
 warn () {
@@ -231,7 +215,7 @@ init () {
 		def=
 		typ="${ARGUMENTS[i++]}"
 		varname="${ARGUMENTS[i++]}"
-		sv val "$varname"
+		val="${!varname}"
 		if [[ "$val" == "" ]]; then
 			(( flags |= F_SKIP ))
 		fi
@@ -272,7 +256,7 @@ init () {
 		if (( !( flags & ( F_NOVAL | F_NODEF ) ) )); then
 			def="${ARGUMENTS[i++]}"
 			if [[ "$val" == "" ]]; then
-				ev "$varname" "$def"
+				declare -g "$varname"="$def"
 				val="$def"
 			fi
 			if [[ "$val" == "$def" ]]; then
