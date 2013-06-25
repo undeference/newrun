@@ -157,7 +157,7 @@ forcequit () {
 		if ! isrunning; then
 			return
 		fi
-			kill -TERM $PID &> /dev/null
+		kill -TERM $PID &> /dev/null
 		sleep 1
 		if isrunning; then
 			warn "$_NAME: server doesn't want to quit"
@@ -196,9 +196,9 @@ stringify () {
 }
 
 unshift () {
-	local arr="$1"
+	local arr="$1" ara="$1[@]"
 	shift 1
-	eval "$arr=(\"\$@\" \"\${$arr[@]}\")"
+	declare -a -g "$arr"='("$@" "${!ara}")'
 }
 
 ## flags
