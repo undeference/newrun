@@ -45,7 +45,7 @@ screenCmd () {
 		exit 5
 	fi
 	# if someone started typing something before we "stuff", our text gets
-	# prepended onto theirs
+	# appended onto theirs
 	# either we exec their command prematurely or we try to overwrite it
 	# prematurely execing a command could be dangerous
 	local x=$'\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b'
@@ -66,7 +66,7 @@ screenStart () {
 	screen -q -S "$SESSION" -X screen -t "$WINDOW" \
 		"$SERVER" "$@" &> /dev/null
 
-	# 2s should be sufficient for the server to start
+	# 1s should be sufficient for the server to start
 	sleep 1
 	pidfilehack
 	if (( PID == 0 )); then
