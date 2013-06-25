@@ -21,7 +21,7 @@ ARGDELIM=" "
 EQUALS=
 
 # Prefix command line options with this (e.g., "--")
-PREFIX=+ # note no "set"
+PREFIX=+
 
 # Server to start
 PLATFORM="$(uname | lower)"
@@ -46,7 +46,7 @@ case "$ARCH" in
 esac
 _SERVER="$SVDIR/ioq3ded.$ARCH"
 
-# Default line options for starting the server
+# Default command line options for starting the server
 ARGUMENTS=(
 # type	config name	default value			command line arguments +
 dir	BASEPATH	"$SVDIR"			set fs_basepath +
