@@ -195,12 +195,6 @@ stringify () {
 	echo "$str"
 }
 
-unshift () {
-	local arr="$1" ara="$1[@]"
-	shift 1
-	declare -a -g "$arr"='("$@" "${!ara}")'
-}
-
 ## flags
 F_SKIP=1	# skip
 F_NOARG=2	# no arguments
