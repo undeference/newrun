@@ -250,7 +250,9 @@ init () {
 		if (( !( flags & ( F_NOVAL | F_NODEF ) ) )); then
 			def="${ARGUMENTS[i++]}"
 			if [[ "$val" == "" ]]; then
-				declare -g "$varname"="$def"
+				eval "$varname=\"$def\""
+				# -g is not well supported
+				#declare -g "$varname"="$def"
 				val="$def"
 			fi
 			if [[ "$val" == "$def" ]]; then
