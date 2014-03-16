@@ -113,22 +113,27 @@ getpid () {
 }
 
 savepid () {
-	if [[ "$PIDFILE" != "" && "$PIDFILE" != "$DEFAULT_PIDFILE" ]]; then
+	if [[ "$PIDFILE" != "" ]]; then
 		echo "$PID" > "$PIDFILE"
 		chmod 600 "$PIDFILE" &> /dev/null
 	fi
 }
 
 removepid () {
-	rm -f "$DEFAULT_PIDFILE" "$PIDFILE" &> /dev/null
+	rm -f "${DEFAULT_PIDFILE[@]}" "$PIDFILE" &> /dev/null
 }
 
 pidfilehack () {
+	local pf
 	PID=
-	if [[ "$DEFAULT_PIDFILE" != "" && -f "$DEFAULT_PIDFILE" ]]; then
-		read PID < "$DEFAULT_PIDFILE"
-		removepid
-	else
+	for pf in "${DEFAULT_PIDFILE[@]}"; do
+		if [[ -f "$pf" ]]; then
+			read PID < "$pf"
+			removepid
+			break 1
+		fi
+	done
+	if [[ "$PID" == "" ]]; then
 		PID=($(pidof "$SERVER"))
 		if (( ${#PID[@]} == 1 )); then
 			PID="${PID[0]}"

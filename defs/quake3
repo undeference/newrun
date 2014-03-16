@@ -85,7 +85,7 @@ QUIT=quit
 if [ -z "$TMPDIR" ]; then
 	TMPDIR=/tmp
 fi
-DEFAULT_PIDFILE="$TMPDIR/ioq3_server.pid"
+DEFAULT_PIDFILE=("$HOMEDIR/ioq3_server.pid" "$TMPDIR/ioq3_server.pid")
 
 PIPEPATH="$HOMEPATH/$GAMENAME/$PIPEFILE"
 if [[ "$HOMEPATH" != "" ]]; then

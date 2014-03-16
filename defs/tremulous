@@ -85,7 +85,10 @@ QUOTE=double
 QUIT=quit
 
 # Where (if) the game dumps its pid
-DEFAULT_PIDFILE="$HOMEDIR/tremulous_server.pid"
+if [ -z "$TMPDIR" ]; then
+	TMPDIR=/tmp
+fi
+DEFAULT_PIDFILE=("$HOMEDIR/tremulous_server.pid" "$TMPDIR/tremulous_server.pid")
 
 PIPEPATH="$HOMEPATH/$GAMENAME/$PIPEFILE"
 if [[ "$HOMEPATH" != "" ]]; then
