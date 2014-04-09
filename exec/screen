@@ -67,7 +67,7 @@ screenStart () {
 		"$SERVER" "$@" &> /dev/null
 
 	# sufficient time for the server to start
-	sleep 4
+	sleep 10
 	pidfilehack
 	if (( PID == 0 )); then
 		warn "$_NAME: server may not be running"
