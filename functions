@@ -1,4 +1,4 @@
-# This file is part of newrun, copyright © 2011-2013 M. Kristall
+# This file is part of newrun, copyright © 2011-2014 M. Kristall
 #
 # This program is free software. You can redistribute it and/or modify it under
 # the terms of version 2 of the GNU General Public License (GPL) as published by
@@ -35,11 +35,22 @@ warn () {
 	echo "$@" #>&2  stderr gets redirected to /dev/null in most places
 }
 
+die () {
+	local r=$1
+	shift 1
+	warn "$@"
+	exit $r
+}
+
 include () {
-	if ! . "$1" 2> /dev/null; then
-		warn "$_NAME: could not exec '$1'"
-		exit 3
-	fi
+	. "$1" 2> /dev/null || die 3 "$_NAME: could not exec '$1'"
+}
+
+tryrun () {
+	local func="$1"
+	shift 1
+	declare -f "$func" > /dev/null || return 1
+	"$func" "$@"
 }
 
 readconfig () {
@@ -54,8 +65,7 @@ readconfig () {
 		SERVER="$_SERVER"
 	fi
 	if [ ! -x "$SERVER" ]; then
-		warn "$_NAME: SERVER cannot be used: $SERVER"
-		exit 4
+		die 4 "$_NAME: SERVER cannot be used: $SERVER"
 	fi
 
 	if [[ "$EXEC" == "" ]]; then
@@ -301,16 +311,9 @@ init () {
 }
 
 Cmd () {
-	"$COMM"Cmd "$@" 2>/dev/null
-	local r=$?
-	if (( r == 127 )) && [[ "$COMM" != "$EXEC" ]]; then
-		"$EXEC"Cmd "$@" 2>/dev/null
-		r=$?
-	fi
-	if (( r == 127 )); then
-		echo "$_NAME: $COMM does not specify a way to communicate" >&2
-		exit 3
-	fi
+	tryrun "$COMM"Cmd "$@" 2> /dev/null || \
+	tryrun "$EXEC"Cmd "$@" 2> /dev/null || \
+	die 3 "$_NAME: $COMM does not specify a way to communicate" >&2
 }
 
 Start () {
@@ -320,8 +323,8 @@ Start () {
 	if [[ "$COMM" != "$EXEC" ]]; then
 		"$COMM"StartCmd 2>/dev/null
 	fi
-	"$EXEC"Start "${run[@]}" "${STARTCMD[@]}" "$@" 2>/dev/null
-	if (( $? == 127 )); then
+	if ! tryrun "$EXEC"Start "${run[@]}" "${STARTCMD[@]}" "$@" 2> /dev/null
+	then
 		"$SERVER" "${run[@]}" "${STARTCMD[@]}" "$@" \
 			< /dev/null &> /dev/null &
 		PID=$!
@@ -331,12 +334,8 @@ Start () {
 }
 
 Stop () {
-	"$EXEC"Stop "$@" 2>/dev/null
-	if (( $? == 127 )); then
-		if ! isrunning; then
-			warn "$_NAME: server may not be running"
-			exit 125
-		fi
+	if ! tryrun "$EXEC"Stop "$@" 2>/dev/null; then
+		isrunning || die 125 "$_NAME: server may not be running"
 		Cmd $QUIT "$(stringify "$@")" 2> /dev/null
 		forcequit
 		removepid
@@ -344,12 +343,8 @@ Stop () {
 }
 
 Restart () {
-	"$EXEC"Restart "$@" 2>/dev/null
-	if (( $? == 127 )); then
-		if ! isrunning; then
-			warn "$_NAME: server may not be running"
-			exit 125
-		fi
+	if ! tryrun "$EXEC"Restart "$@" 2>/dev/null; then
+		isrunning || die 125 "$_NAME: server may not be running"
 		Stop Please reconnect in a few seconds
 		Start "$@"
 	fi
