@@ -29,7 +29,7 @@ if [[ "$WINDOW" =~ ^[0-9]+$ ]]; then
 fi
 
 _screen_sessionexists () {
-	screen -S "$SESSION" -Q select &> /dev/null
+	screen -S "$SESSION" -Q select . &> /dev/null
 	return $?
 }
 
