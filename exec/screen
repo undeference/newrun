@@ -59,9 +59,13 @@ screenStart () {
 
 	screen -qS "$SESSION" -X screen -t "$WINDOW" "$SERVER" "$@" &> /dev/null
 
-	# sufficient time for the server to start
-	sleep 10
+	# wait up to 10 seconds
+	local count=10
 	pidfilehack
+	while (( PID <= 0 && --count > 0 )); do
+		sleep 1
+		pidfilehack
+	done
 	if (( PID == 0 )); then
 		warn "$_NAME: server may not be running"
 		exit 125
