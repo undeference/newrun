@@ -44,21 +44,20 @@ screenCmd () {
 	# prematurely execing a command could be dangerous
 	local x=$'\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b'
 	local y="$(stringify "$@")"
-	screen -q -S "$SESSION" -p "$WINDOW" -X stuff "$x$y^M" #&> /dev/null
+	screen -qS "$SESSION" -p "$WINDOW" -X stuff "$x$y^M" #&> /dev/null
 }
 
 screenStart () {
 	# if there is no screen session with that name, create it
 	if ! _screen_sessionexists; then
-		if ! screen -q -S "$SESSION" -d -m &> /dev/null; then
+		if ! screen -qdmS "$SESSION" &> /dev/null; then
 			warn "$_NAME: could not create session '$SESSION'"
 			exit 5
 		fi
 		sleep 1
 	fi
 
-	screen -q -S "$SESSION" -X screen -t "$WINDOW" \
-		"$SERVER" "$@" &> /dev/null
+	screen -qS "$SESSION" -X screen -t "$WINDOW" "$SERVER" "$@" &> /dev/null
 
 	# sufficient time for the server to start
 	sleep 10
@@ -80,7 +79,7 @@ screenStop () {
 		exit 5
 	fi
 	Cmd $QUIT "$(stringify "$@")"
-	screen -q -S "$SESSION" -p "$WINDOW" -X kill
+	screen -qS "$SESSION" -p "$WINDOW" -X kill
 	forcequit
 	removepid
 }
