@@ -29,14 +29,8 @@ if [[ "$WINDOW" =~ ^[0-9]+$ ]]; then
 fi
 
 _screen_sessionexists () {
-	local list="$(screen -list)"
-	if [[ "$list" =~ "No Sockets found in " ]]; then
-		return 1
-	fi
-	if [[ "$list" =~ "$SESSION" ]]; then
-		return 0
-	fi
-	return 1
+	screen -S "$SESSION" -Q select &> /dev/null
+	return $?
 }
 
 screenCmd () {
