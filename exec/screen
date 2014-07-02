@@ -50,7 +50,7 @@ screenCmd () {
 	# prematurely execing a command could be dangerous
 	local x=$'\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b'
 	local y="$(stringify "$@")"
-	screen -q -S "$SESSION" -p "$WINDOW" -X stuff "$x$y"$'\r' #&> /dev/null
+	screen -q -S "$SESSION" -p "$WINDOW" -X stuff "$x$y^M" #&> /dev/null
 }
 
 screenStart () {
