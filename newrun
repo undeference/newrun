@@ -38,13 +38,9 @@
 # Reload	reload server data after an upgrade
 #	arguments=none
 
-# determine path and name and change to a safe location in case an executioner
-# daemonizes
-_PATH="$(dirname "${BASH_SOURCE[0]}")"
+# determine path and name
+_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && dirname "$(pwd)")"
 _NAME="$(basename "${BASH_SOURCE[0]}")"
-cd "$_PATH"
-_PATH="$(pwd)"
-cd /
 
 . "$_PATH/configuration" &> /dev/null || . /etc/newrun.conf || exit 3
 . "$_FUNCTIONSPATH"
