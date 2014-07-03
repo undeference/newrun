@@ -1,5 +1,5 @@
 #!/bin/bash
-# This file is part of newrun, copyright © 2011, 2012 M. Kristall
+# This file is part of newrun, copyright © 2011, 2012, 2014 M. Kristall
 #
 # This program is free software. You can redistribute it and/or modify it under
 # the terms of version 2 of the GNU General Public License (GPL) as published by
@@ -72,11 +72,21 @@ cmd_restart () {
 		echo "server pid=$PID"
 	fi
 }
+
+cmd_status () {
+	if isrunning; then
+		echo "$config is running with pid=$PID"
+	else
+		echo "$config is not running"
+	fi
+}
+
 cmds+=(start cmd_start)
 cmds+=(restart cmd_restart)
 cmds+=(stop Stop)
 cmds+=(reload Reload)
 cmds+=(exec Cmd)
+cmds+=(status cmd_status)
 
 cmd="$1"
 shift 1
