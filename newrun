@@ -41,7 +41,7 @@
 _PATH="$(dirname "$0")"
 _NAME="$(basename "$0")"
 . "$_PATH/configuration"
-. "$_PATH/functions"
+. "$_FUNCTIONSPATH"
 
 config="$1"
 shift 1

@@ -1,4 +1,4 @@
-# This file is part of newrun, copyright © 2011, 2012 M. Kristall
+# This file is part of newrun, copyright © 2011-2014 M. Kristall
 #
 # This program is free software. You can redistribute it and/or modify it under
 # the terms of version 2 of the GNU General Public License (GPL) as published by
@@ -11,9 +11,16 @@
 # You should have received a copy of the GPL with this distribution. If not,
 # see <http://www.gnu.org/licenses/>.
 
-# paths
+# path to directory that will be used for storing pid files
 _PIDPATH="/var/tmp"
+# path to directory where the server configuration files are located
 _CONFIGPATH="$_PATH/conf"
+
+# path to "functions" file
+_FUNCTIONSPATH="$_PATH/functions"
+# path of "exec" directory
 _EXECPATH="$_PATH/exec"
+# path of "defs" directory
 _DEFPATH="$_PATH/defs"
+# path of "plugins" directory (blank to disable plugins)
 _PLUGINPATH="$_PATH/plugins"
