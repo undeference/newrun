@@ -4,9 +4,9 @@ newrun is meant for controlling game servers
 
 Getting started
 1. Pick a good place to put the important files. The file "configuration" must
-   be in the same directory as the file "newrun". The file "functions" and
-   directories "conf", "exec", and "defs" can be anywhere as long as you update
-   the file "configuration" appropriately
+   be in the same directory as the file "newrun" or as "/etc/newrun.conf". The
+   file "functions" and the directories "conf", "exec", and "defs" can be
+   anywhere as long as you update the file "configuration" appropriately
 2. Update locations in the file "configuration" if you put things in non-default
    locations
 3. Make a new config for your server in "conf". The included example config

@@ -40,7 +40,7 @@
 
 _PATH="$(dirname "$0")"
 _NAME="$(basename "$0")"
-. "$_PATH/configuration"
+. "$_PATH/configuration" &> /dev/null || . /etc/newrun.conf || exit 3
 . "$_FUNCTIONSPATH"
 
 config="$1"
