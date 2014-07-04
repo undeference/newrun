@@ -38,15 +38,11 @@ _pipehack_send () {
 
 _pipehack_start () {
 	local pid=$PID
-	exec 0<&-
-	exec 1<&-
-	exec 2<&-
-	while (( 1 )); do
+	while true; do
 		if [ ! -p "$PIPEPATH" ]; then
 			mkfifo "$PIPEPATH"
 		fi
-		exec 0<>"$PIPEPATH"
-		while read -r -u 0 x; do
+		while read -r x < "$PIPEPATH"; do
 			_pipehack_send "$x"
 			y=($x)
 			y[0]=$(echo ${y[0]} | tr [A-Z] [a-z])
@@ -62,7 +58,6 @@ _pipehack_start () {
 	if [[ "$EXECHACK" != "" ]]; then
 		"$EXECHACK"Stop "${x:5}"
 	fi
-	exit 0
 }
 
 pipehackStart () {
