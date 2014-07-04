@@ -64,11 +64,11 @@ pipehackStart () {
 	if [[ "$EXECHACK" != "" ]] && tryrun "$EXECHACK"Start "$@" 2> /dev/null
 	then
 		_pipehack_start &> /dev/null &
-		PID=$!
 	else
 		EXECHACK=
 		_pipehack_start | "$SERVER" "$@" &> /dev/null &
 	fi
+	PID=$!
 	disown
 	COMM=pipe
 	savepid
