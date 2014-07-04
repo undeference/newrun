@@ -182,10 +182,9 @@ forcequit () {
 }
 
 stringify () {
-	local str append arg i
-	while (( $# > 0 )); do
-		arg="$1"
-		shift 1
+	local str append arg h i
+	for (( h = 1; h <= $#; h++ )); do
+		arg="${!h}"
 		if [[ "$QUOTE" == escape ]]; then
 			for (( i = 0; i < ${#arg}; i++ )); do
 				if [[ "${arg:i:1}" =~ ["$UNSAFE"] ]]; then
