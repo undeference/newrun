@@ -61,17 +61,13 @@ _pipehack_start () {
 }
 
 pipehackStart () {
-	local r=127
-	if [[ "$EXECHACK" != "" ]]; then
-		"$EXECHACK"Start "$@"
-		r=$?
-	fi
-	if (( r == 127 )); then
-		EXECHACK=
-		_pipehack_start | "$SERVER" "$@" &> /dev/null &
-	else
+	if [[ "$EXECHACK" != "" ]] && tryrun "$EXECHACK"Start "$@" 2> /dev/null
+	then
 		_pipehack_start &> /dev/null &
 		PID=$!
+	else
+		EXECHACK=
+		_pipehack_start | "$SERVER" "$@" &> /dev/null &
 	fi
 	disown
 	COMM=pipe
