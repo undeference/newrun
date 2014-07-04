@@ -27,13 +27,13 @@ _pipe_available () {
 
 pipeCmd () {
 	if _pipe_available; then
-		stringify "$@" > "$PIPEPATH"
+		echo "$@" > "$PIPEPATH"
 	fi
 }
 
 pipeStop () {
 	if _pipe_available; then
-		Cmd $QUIT "$(stringify "$@")"
+		Cmd $QUIT "$@"
 		forcequit
 	else
 		warn "$_NAME: server is not running?"

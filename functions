@@ -310,8 +310,9 @@ init () {
 }
 
 Cmd () {
-	tryrun "$COMM"Cmd "$@" 2> /dev/null || \
-	tryrun "$EXEC"Cmd "$@" 2> /dev/null || \
+	local args="$(stringify "$@")"
+	tryrun "$COMM"Cmd "$args" 2> /dev/null || \
+	tryrun "$EXEC"Cmd "$args" 2> /dev/null || \
 	die 3 "$_NAME: $COMM does not specify a way to communicate" >&2
 }
 
@@ -333,9 +334,10 @@ Start () {
 }
 
 Stop () {
-	if ! tryrun "$EXEC"Stop "$@" 2>/dev/null; then
+	local args="$(stringify "$@")"
+	if ! tryrun "$EXEC"Stop "$args" 2>/dev/null; then
 		isrunning || die 125 "$_NAME: server may not be running"
-		Cmd $QUIT "$(stringify "$@")" 2> /dev/null
+		Cmd $QUIT "$args" 2> /dev/null
 		forcequit
 		removepid
 	fi

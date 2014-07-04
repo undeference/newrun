@@ -58,7 +58,7 @@ q3rconCmd () {
 	if [[ "$RCON" == "" ]]; then
 		_rcon_get
 	fi
-	echo $'\xff\xff\xff\xffrcon '"\"$RCON\" $(stringify $@)" > \
+	echo $'\xff\xff\xff\xffrcon '"\"$RCON\" $@" > \
 		"/dev/udp/$ADDRESS/$PORT"
 }
 
@@ -75,7 +75,7 @@ q3rconStartCmd () {
 
 q3rconStop () {
 	if isrunning; then
-		Cmd quit "$(stringify "$@")"
+		Cmd quit "$@"
 		forcequit
 	else
 		warn "$_NAME: server is not running?"

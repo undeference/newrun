@@ -43,8 +43,7 @@ screenCmd () {
 	# either we exec their command prematurely or we try to overwrite it
 	# prematurely execing a command could be dangerous
 	local x=$'\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b'
-	local y="$(stringify "$@")"
-	screen -qS "$SESSION" -p "$WINDOW" -X stuff "$x$y^M" #&> /dev/null
+	screen -qS "$SESSION" -p "$WINDOW" -X stuff "$x$@^M" #&> /dev/null
 }
 
 screenStart () {
@@ -82,7 +81,7 @@ screenStop () {
 		warn "$_NAME: no such session"
 		exit 5
 	fi
-	Cmd $QUIT "$(stringify "$@")"
+	Cmd $QUIT "$@"
 	screen -qS "$SESSION" -p "$WINDOW" -X kill
 	forcequit
 	removepid

@@ -30,7 +30,7 @@ COMM=pipe
 
 _pipehack_send () {
 	if [[ "$EXECHACK" == "" ]]; then
-		stringify "$@"
+		echo "$@"
 	else
 		"$EXECHACK"Cmd "$@"
 	fi
