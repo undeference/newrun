@@ -39,6 +39,7 @@ _pipehack_send () {
 _pipehack_start () {
 	local pid=$PID
 	exec 0<&-
+	exec 1<&-
 	exec 2<&-
 	while (( 1 )); do
 		if [ ! -p "$PIPEPATH" ]; then
