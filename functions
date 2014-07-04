@@ -247,14 +247,14 @@ init () {
 			file)
 				if (( !( flags & F_SKIP ) )) && [ ! -f "$val" ];
 				then
-					echo "$val is not a file" >&2
+					echo "$varname=$val not a file" >&2
 		#			exit 4
 				fi
 				;;
 			dir)
 				if (( !( flags & F_SKIP ) )) && [ ! -d "$val" ];
 				then
-					echo "$val is not a directory" >&2
+					echo "$varname=$val not a directory" >&2
 		#			exit 4
 				fi
 				;;
