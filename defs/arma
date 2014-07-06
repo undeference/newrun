@@ -1,0 +1,58 @@
+# This file is part of newrun, copyright © M. Kristall
+#
+# This program is free software. You can redistribute it and/or modify it under
+# the terms of version 2 of the GNU General Public License (GPL) as published by
+# the Free Software Foundation.
+#
+# This program is distributed WITHOUT ANY WARRANTY; without even the implied
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GPL
+# for more details.
+#
+# You should have received a copy of the GPL with this distribution. If not,
+# see <http://www.gnu.org/licenses/>.
+
+# This is where Tremulous-specific parts belong
+
+# These characters are not safe and require quoting
+UNSAFE=";"
+ARGDELIM=" "
+
+# Separate key/value pairs on the command line with this character
+EQUALS==
+
+# Prefix command line options with this (e.g., "--")
+PREFIX=-
+
+_SERVER=armaserver
+
+# Default command line options for starting the server
+ARGUMENTS=(
+# type	config name	default value			command line arguments +
+file	SERVERCONFIG	""				config +
+file	BASECONFIG	""				cfg +
+file	BEPATH		""				BEpath +
+str	MOD		""				mod +
+#bool	NETLOT						netlog +
+int	PORT		2302				port +
+str	IP		""				ip +
+#bool	NOLAND						noland +
+str	RANKING		""				ranking +
+)
+
+# Whether lexical case of commands is significant
+# lower and upper specify natural case of commands; preserve doesn't change case
+# for comparisons (e.g., with QUIT)
+CASE=lower
+
+# Quoting style: double, single, escape
+QUOTE=double
+
+# Command sent to the server prior to signaling
+# (should be a way to indicate to send a specific signal instead)
+QUIT=quit
+
+DEFAULT_PIDFILE=
+
+armaStartCmd () {
+	run=(start -pid="$PIDFILE" -client "${run[@]}")
+}

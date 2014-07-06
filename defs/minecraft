@@ -13,20 +13,22 @@
 
 # This is where Minecraft-specific parts belong
 
-_SERVER="$(which java)"
+_SERVER=java
 _JAR=minecraft_server.jar
 
 ARGDELIM=" "
 QUOTE=double
 QUIT=stop
 
-ARGUMENTS=()
+ARGUMENTS=(
+# type	config name	default value	command line arguments +
+)
 
 minecraftStartCmd () {
 	if [ -z "$_JAR" ]; then
 		JAR="$_JAR"
 	fi
-	run=(run $JAVAARGS -jar "$JAR" $ARGS "${run[@]}")
+	run=($JAVAARGS -jar "$JAR" $ARGS "${run[@]}" nogui)
 }
 
 minecraftReload () {
