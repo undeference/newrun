@@ -43,7 +43,7 @@ _PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 _NAME="$(basename "${BASH_SOURCE[0]}")"
 
 . "$_PATH/configuration" &> /dev/null || . /etc/newrun.conf || exit 3
-. "$_FUNCTIONSPATH"
+. "$_FUNCTIONSPATH" &> /dev/null || exit 4
 
 config="$1"
 shift 1
