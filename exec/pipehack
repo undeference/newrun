@@ -36,52 +36,59 @@ _pipehack_send () {
 	fi
 }
 
+_pipehack_quit () {
+	rm "$PIPEPATH"
+	if [[ "$EXECHACK" != "" ]]; then
+		"$EXECHACK"Stop "$@"
+	else
+		_pipehack_send quit "$@"
+		forcequit
+	fi
+	exit
+}
+
 _pipehack_start () {
-	local pid=$PID
-	while true; do
+	local x y msg
+	pidfilehack
+	trap _pipehack_quit SIGQUIT SIGKILL SIGTERM SIGCHLD
+	while isrunning; do
 		if [ ! -p "$PIPEPATH" ]; then
 			mkfifo "$PIPEPATH"
 		fi
-		while read -r x < "$PIPEPATH"; do
+		# wake up every 5 seconds
+		while read -r -t 5 x < "$PIPEPATH"; do
 			_pipehack_send "$x"
 			y=($x)
 			y[0]=$(echo ${y[0]} | tr [A-Z] [a-z])
 			if [[ "${y[0]}" == "$QUIT" ]]; then
+				msg="${x:${#QUIT}}"
 				break 2
 			fi
 		done
-		if ! kill -0 $pid 2>/dev/null; then
-			break 1
-		fi
 	done
-	rm "$PIPEPATH"
-	if [[ "$EXECHACK" != "" ]]; then
-		"$EXECHACK"Stop "${x:5}"
-	fi
+	_pipehack_quit "$msg"
 }
 
 pipehackStart () {
 	if [[ "$EXECHACK" != "" ]] && tryrun "$EXECHACK"Start "$@" 2> /dev/null
 	then
 		_pipehack_start &> /dev/null &
+		PID=$!
 	else
 		EXECHACK=
-		_pipehack_start | "$SERVER" "$@" &> /dev/null &
+		_pipehack_start | script -c "$SERVER $*" /dev/null &> /dev/null &
+		PID=$(jobs -p 1)
 	fi
-	PID=$!
 	disown
-	COMM=pipe
 	savepid
 }
 
 pipehackStartCmd () {
-	COMM="$EXEC"
 	if [[ "$EXECHACK" != "" ]]; then
 		"$EXECHACK"StartCmd
 	fi
 }
 
 pipehackStop () {
-	"$EXECHACK"Stop "$@"
-	return $?
+	echo "$QUIT" "$@" > "$PIPEPATH"
 }
