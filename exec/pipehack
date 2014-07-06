@@ -77,10 +77,9 @@ pipehackStart () {
 	else
 		EXECHACK=
 		# tremded tends to ignore piped input; script takes care of that
-		# ensure script's -c argument is properly shell-escaped
 		_pipehack_start | \
-			script -c "$(printf %q "$SERVER" "$@")" /dev/null &> \
-			/dev/null &
+			script -c "$(shellify "$SERVER" "$@")" /dev/null \
+			&> /dev/null &
 		PID=$(jobs -p 1)
 	fi
 	disown
