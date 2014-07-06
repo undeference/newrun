@@ -113,10 +113,10 @@ countdown () {
 	done
 }
 
-Reload () {
+quake3Reload () {
 	countdown 5 Restart
-	if [[ "$RELOADCOMMAND" != "" ]]; then
-		Cmd $RELOADCOMMAND
+	if (( ${#RELOADCOMMAND[@]} )); then
+		Cmd "${RELOADCOMMAND[@]}"
 	elif [[ "$MAPNAME" != "" ]]; then
 		Cmd map "$MAPNAME"
 	else

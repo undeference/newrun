@@ -360,5 +360,5 @@ Restart () {
 }
 
 Reload () {
-	Restart
+	tryrun "$TYPE"Reload 2>/dev/null || Restart
 }

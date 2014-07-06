@@ -116,9 +116,9 @@ CONFIG=server.cfg
 # Map to start when starting the server
 MAPNAME=atcs3
 
-# Alternative command to run when the "reload" command is used
-# If unset, "map $MAPNAME" will be used or the server will restart
-RELOADCMD=advanceMapRotation
+# Alternative command (may be a list) to run when the "reload" command is used
+# If unset, (map "$MAPNAME") will be used or the server will restart
+RELOADCOMMAND=advanceMapRotation
 ################################################################################
 
 

@@ -116,10 +116,10 @@ countdown () {
 	done
 }
 
-Reload () {
+tremulousReload () {
 	countdown 5 Restart
-	if [[ "$RELOADCOMMAND" != "" ]]; then
-		Cmd $RELOADCOMMAND
+	if (( ${#RELOADCOMMAND[@]} )); then
+		Cmd "${RELOADCOMMAND[@]}"
 	elif [[ "$MAPNAME" != "" ]]; then
 		Cmd map "$MAPNAME"
 	else

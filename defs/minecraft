@@ -29,6 +29,6 @@ minecraftStartCmd () {
 	run=(run $JAVAARGS -jar "$JAR" $ARGS "${run[@]}")
 }
 
-Reload () {
+minecraftReload () {
 	Cmd reload
 }
