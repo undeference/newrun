@@ -76,11 +76,12 @@ cmd_restart () {
 }
 
 cmd_status () {
-	if isrunning; then
-		echo "$config is running with pid=$PID"
-	else
+	if ! isrunning; then
 		echo "$config is not running"
+		exit 1
 	fi
+	echo "$config is running with pid=$PID"
+	tryrun "$TYPE"Status
 }
 
 cmds+=(start cmd_start)
