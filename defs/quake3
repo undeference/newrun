@@ -108,7 +108,7 @@ countdown () {
 		if (( i == 1 )); then
 			s=
 		fi
-		Cmd cp "^$i$@ in $i second$s"
+		Cmd say "^$i$@ in $i second$s"
 		sleep 1
 	done
 }
