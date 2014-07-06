@@ -49,7 +49,7 @@ include () {
 tryrun () {
 	local func="$1"
 	shift 1
-	declare -f "$func" > /dev/null || return 1
+	declare -f "$func" > /dev/null || return 127
 	"$func" "$@"
 }
 
