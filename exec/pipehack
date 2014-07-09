@@ -37,7 +37,7 @@ _pipehack_send () {
 }
 
 _pipehack_quit () {
-	rm "$PIPEPATH" 2> /dev/null
+	[ -p "$PIPEPATH" ] && rm "$PIPEPATH" 2> /dev/null
 	if [[ "$EXECHACK" != "" ]]; then
 		"$EXECHACK"Stop "$@"
 	else
@@ -51,12 +51,11 @@ _pipehack_start () {
 	local x y msg
 	pidfilehack
 	trap _pipehack_quit HUP INT QUIT KILL PIPE TERM
-	# just in case
-	rm "$PIPEPATH" 2> /dev/null
+	# replace stdin
+	[ -p "$PIPEPATH" ] && exec 0<> "$PIPEPATH"
 	while isrunning; do
 		if [ ! -p "$PIPEPATH" ]; then
-			mkfifo "$PIPEPATH"
-			# replace stdin
+			mkfifo "$PIPEPATH" || _pipehack_quit
 			exec 0<> "$PIPEPATH"
 		fi
 		# wake up every 5 seconds
