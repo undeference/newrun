@@ -34,10 +34,8 @@ pipeCmd () {
 pipeStop () {
 	if _pipe_available; then
 		Cmd $QUIT "$@"
-		forcequit
 	else
 		warn "$_NAME: server is not running?"
-		exit 125
 	fi
-	removepid
+	forcequit
 }

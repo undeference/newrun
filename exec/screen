@@ -84,5 +84,4 @@ screenStop () {
 	Cmd $QUIT "$@"
 	screen -qS "$SESSION" -p "$WINDOW" -X kill
 	forcequit
-	removepid
 }

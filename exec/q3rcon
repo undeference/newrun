@@ -74,12 +74,6 @@ q3rconStartCmd () {
 }
 
 q3rconStop () {
-	if isrunning; then
-		Cmd quit "$@"
-		forcequit
-	else
-		warn "$_NAME: server is not running?"
-		exit 125
-	fi
-	removepid
+	Cmd quit "$@"
+	forcequit
 }
