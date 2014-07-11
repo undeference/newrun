@@ -56,6 +56,9 @@ tryrun () {
 readconfig () {
 	local config="$1"
 	include "$_CONFIGPATH/$config"
+	if [[ "$RUNAS" != "" && "$RUNAS" != "$USER" ]]; then
+		exec su "$USER" -c "$_PATH/$_NAME"
+	fi
 	include "$_DEFPATH/$TYPE"
 
 	local svname="$(basename "$config")"

@@ -1,6 +1,9 @@
 # This file is part of newrun, copyright © M. Kristall
 
 ################################################################################
+# Switch to this user to run (a password is required if not run as root)
+#RUNAS=games
+
 #### Executors
 # EXEC is set to the EXECutor
 # COMM can be set to override the executor's COMMunications (e.g., "exec")
@@ -13,7 +16,7 @@
 
 ## pipe executor
 # pipe is equivalent to null in terms of starting the server
-# the $QUIT command will first be sent to the server before signalling
+# the $QUIT command will first be sent to the server before signaling
 # "exec" is handled by writing to a fifo
 #EXEC=pipe
 #COMM=pipe
