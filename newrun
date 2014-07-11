@@ -113,11 +113,11 @@ for (( i = 0; i < ${#cmds[@]}; i += 2 )); do
 	fi
 	if [[ "$cmd" == "${cmds[i]}" ]]; then
 		readconfig "$config"
-		run="PRE_${cmds[i]}[@]"
-		${!run}
+		_indirect="PRE_${cmds[i]}[@]"
+		${!_indirect}
 		"${cmds[i + 1]}" "$@"
-		run="POST_${cmds[i]}[@]"
-		${!run}
+		_indirect="POST_${cmds[i]}[@]"
+		${!_indirect}
 		exit 0
 	fi
 done
