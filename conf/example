@@ -4,6 +4,13 @@
 # Switch to this user to run (a password is required if not run as root)
 #RUNAS=games
 
+# Commands can also be configured to run before or after server commands, e.g.,
+#PRE_start=(echo Starting)
+#POST_start=(echo Started)
+# will print "Starting" before, and "Started" after, the "start" command is used
+#POST_hi=(echo Bye)
+# will print "Bye" after using the "hi" command
+
 #### Executors
 # EXEC is set to the EXECutor
 # COMM can be set to override the executor's COMMunications (e.g., "exec")
