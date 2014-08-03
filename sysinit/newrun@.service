@@ -1,0 +1,18 @@
+[Unit]
+Description=newrun - %i
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Restart=no
+# Prefer RUNAS in server configuration files
+#User=newrun
+#Group=newrun
+ExecStart=path/to/newrun %i start
+ExecReload=path/to/newrun %i reload
+ExecStop=path/to/newrun %i stop Server stopped by systemd
+TimeoutStopSec=0
+
+[Install]
+WantedBy=newrun.target
