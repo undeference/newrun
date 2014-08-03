@@ -3,8 +3,7 @@ Description=newrun - %i
 After=network.target
 
 [Service]
-Type=forking
-PIDFile=/var/tmp/%i.pid
+Type=oneshot
 RemainAfterExit=yes
 Restart=no
 # Prefer RUNAS in server configuration files
