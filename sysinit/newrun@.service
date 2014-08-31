@@ -15,4 +15,4 @@ ExecStop=path/to/newrun %i stop Server stopped by systemd
 TimeoutStopSec=0
 
 [Install]
-WantedBy=newrun.target
+WantedBy=multi-user.target
