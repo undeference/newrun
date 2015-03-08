@@ -75,7 +75,6 @@ pipehackStart () {
 	if [[ "$EXECHACK" != "" ]] && tryrun "$EXECHACK"Start "$@" 2> /dev/null
 	then
 		_pipehack_start &> /dev/null &
-		PID=$!
 	else
 		EXECHACK=
 		# tremded tends to ignore piped input; script takes care of that
