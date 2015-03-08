@@ -53,7 +53,7 @@ _pipehack_start () {
 	trap _pipehack_quit HUP INT QUIT KILL PIPE TERM
 	# replace stdin
 	[ -p "$PIPEPATH" ] && exec 0<> "$PIPEPATH"
-	while isrunning; do
+	while kill -0 $PID &> /dev/null; do
 		if [ ! -p "$PIPEPATH" ]; then
 			mkfifo "$PIPEPATH" || _pipehack_quit
 			exec 0<> "$PIPEPATH"
