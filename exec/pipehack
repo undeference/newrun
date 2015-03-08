@@ -61,9 +61,8 @@ _pipehack_start () {
 		# wake up every 5 seconds
 		while read -r -t 5 x; do
 			_pipehack_send "$x"
-			y="${x:0:${#QUIT}}"
-			y="${y,,}"
-			if [[ "$y" == "$QUIT" ]]; then
+			y=($x)
+			if [[ "${y[0],,}" == "$QUIT" ]]; then
 				msg="${x:${#QUIT}+1}"
 				break 2
 			fi
