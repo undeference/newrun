@@ -76,6 +76,7 @@ pipehackStart () {
 	then
 		_pipehack_start &> /dev/null &
 	else
+		warn pipehack with no EXECHACK almost certainly will fail
 		EXECHACK=
 		# tremded tends to ignore piped input; script takes care of that
 		_pipehack_start | \
