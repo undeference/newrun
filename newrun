@@ -43,7 +43,7 @@ _PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 _NAME="$(basename "${BASH_SOURCE[0]}")"
 
 . "$_PATH/configuration" &> /dev/null || . /etc/newrun.conf || exit 3
-. "$_FUNCTIONSPATH" &> /dev/null || exit 4
+. "$_FUNCTIONSPATH" || exit 4
 
 config="$1"
 shift 1
@@ -60,7 +60,7 @@ cmd_start () {
 			warn "$_NAME: server already running pid=$PID"
 			exit 125
 		fi
-		rm -f "$PIDFILE" &> /dev/null
+		runcmd rm -f "$PIDFILE"
 	fi
 	Start "$@"
 	if getpid; then
@@ -100,7 +100,7 @@ if [ ! -z "$_PLUGINPATH" ] && [ -d "$_PLUGINPATH" ]; then
 	plugins=($_PLUGINPATH/*)
 	for (( i = 0; i < ${#plugins[@]}; i++ )); do
 		echo "	$(basename "${plugins[i]}")"
-		. "${plugins[i]}"
+		include "${plugins[i]}"
 	done
 fi
 

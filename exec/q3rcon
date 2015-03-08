@@ -58,6 +58,7 @@ q3rconCmd () {
 	if [[ "$RCON" == "" ]]; then
 		_rcon_get
 	fi
+	debug D_SEND "send $@"
 	echo $'\xff\xff\xff\xffrcon '"\"$RCON\" $@" > \
 		"/dev/udp/$ADDRESS/$PORT"
 }

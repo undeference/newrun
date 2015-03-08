@@ -27,6 +27,7 @@ _pipe_available () {
 
 pipeCmd () {
 	if _pipe_available; then
+		debug D_SEND "send $@"
 		echo "$@" > "$PIPEPATH"
 	fi
 }

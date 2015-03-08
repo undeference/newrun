@@ -28,6 +28,7 @@ fi
 
 COMM=pipe
 
+# be careful with runcmd, since it can be piped into tremded or keep spamming
 _pipehack_send () {
 	if [[ "$EXECHACK" == "" ]]; then
 		echo "$@"
@@ -37,7 +38,7 @@ _pipehack_send () {
 }
 
 _pipehack_quit () {
-	[ -p "$PIPEPATH" ] && rm "$PIPEPATH" 2> /dev/null
+	[ -p "$PIPEPATH" ] && rm "$PIPEPATH"
 	if [[ "$EXECHACK" != "" ]]; then
 		"$EXECHACK"Stop "$@"
 	else
@@ -73,8 +74,7 @@ _pipehack_start () {
 }
 
 pipehackStart () {
-	if [[ "$EXECHACK" != "" ]] && tryrun "$EXECHACK"Start "$@" 2> /dev/null
-	then
+	if [[ "$EXECHACK" != "" ]] && tryrun "$EXECHACK"Start "$@"; then
 		_pipehack_start &> /dev/null &
 	else
 		warn pipehack with no EXECHACK almost certainly will fail

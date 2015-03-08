@@ -29,7 +29,7 @@ if [[ "$WINDOW" =~ ^[0-9]+$ ]]; then
 fi
 
 _screen_sessionexists () {
-	screen -S "$SESSION" -Q select . &> /dev/null
+	runcmd screen -S "$SESSION" -Q select .
 	return $?
 }
 
@@ -43,20 +43,21 @@ screenCmd () {
 	# either we exec their command prematurely or we try to overwrite it
 	# prematurely execing a command could be dangerous
 	local x=$'\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b'
-	screen -qS "$SESSION" -p "$WINDOW" -X stuff "$x$@^M" #&> /dev/null
+	debug D_SEND "send $@"
+	screen -qS "$SESSION" -p "$WINDOW" -X stuff "$x$@^M"
 }
 
 screenStart () {
 	# if there is no screen session with that name, create it
 	if ! _screen_sessionexists; then
-		if ! screen -qdmS "$SESSION" &> /dev/null; then
+		if ! runcmd screen -qdmS "$SESSION"; then
 			warn "$_NAME: could not create session '$SESSION'"
 			exit 5
 		fi
 		sleep 1
 	fi
 
-	screen -qS "$SESSION" -X screen -t "$WINDOW" "$SERVER" "$@" &> /dev/null
+	runcmd screen -qS "$SESSION" -X screen -t "$WINDOW" "$SERVER" "$@"
 
 	# wait up to 10 seconds
 	local count=10
@@ -82,6 +83,6 @@ screenStop () {
 		exit 5
 	fi
 	Cmd $QUIT "$@"
-	screen -qS "$SESSION" -p "$WINDOW" -X kill
+	runcmd screen -qS "$SESSION" -p "$WINDOW" -X kill
 	forcequit
 }

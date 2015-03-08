@@ -24,7 +24,18 @@ lower () {
 }
 
 warn () {
-	echo "$@" #>&2  stderr gets redirected to /dev/null in most places
+	echo "$@" >&2
+}
+
+[ -z "$DEBUG" ] && DEBUG=0
+D_COMMAND=1
+D_INCLUDE=2
+D_SEND=4
+D_NOISY=64
+debug () {
+	local l=$1
+	shift 1
+	(( DEBUG & ${!l} )) && warn "$@"
 }
 
 die () {
@@ -35,6 +46,7 @@ die () {
 }
 
 include () {
+	debug D_INCLUDE "include $1"
 	. "$1" 2> /dev/null || die 3 "$_NAME: could not exec '$1'"
 }
 
@@ -42,19 +54,33 @@ tryrun () {
 	local func="$1"
 	shift 1
 	declare -f "$func" > /dev/null || return 127
+	debug D_COMMAND "try $func $@"
 	"$func" "$@"
+	return $?
+}
+
+runcmd () {
+	local cmd="$1" r
+	shift 1
+	debug D_COMMAND "$(shellify run "$cmd" "$@")"
+	"$cmd" "$@"
+	r=$?
+	(( r )) && debug D_COMMAND "  $cmd fails $r"
+	return $r
 }
 
 readconfig () {
 	local config="$1"
 	include "$_CONFIGPATH/$config"
 	if [[ "$RUNAS" != "" && "$RUNAS" != "$USER" ]]; then
-		exec su "$RUNAS" -c "$_PATH/$_NAME"
+		warn "RUNAS may not work right"
+		runcmd exec su "$RUNAS" -c "$_PATH/$_NAME"
 	fi
 	include "$_DEFPATH/$TYPE"
 
 	local svname="$(basename "$config")"
 	PIDFILE="$_PIDPATH/$svname.pid"
+	debug D_NOISY "PID file will be saved to $PIDFILE"
 
 	if [[ "$SERVER" == "" ]]; then
 		SERVER="$_SERVER"
@@ -75,6 +101,7 @@ readconfig () {
 		include "$_EXECPATH/$COMM"
 	fi
 
+	debug D_NOISY "using COMM=$COMM, EXEC=$EXEC"
 
 	case "$CASE" in
 		lower|upper|preserve)
@@ -112,7 +139,9 @@ getpid () {
 	PID=
 	if [ -f "$PIDFILE" ]; then
 		read PID < "$PIDFILE"
+		debug D_NOISY "getpid=$PID"
 	else
+		debug D_NOISY "getpid failed"
 		return 1
 	fi
 }
@@ -120,12 +149,12 @@ getpid () {
 savepid () {
 	if [[ "$PIDFILE" != "" ]]; then
 		echo "$PID" > "$PIDFILE"
-		chmod 600 "$PIDFILE" &> /dev/null
+		runcmd chmod 600 "$PIDFILE"
 	fi
 }
 
 removepid () {
-	rm -f "${DEFAULT_PIDFILE[@]}" "$PIDFILE" &> /dev/null
+	runcmd rm -f "${DEFAULT_PIDFILE[@]}" "$PIDFILE"
 }
 
 pidfilehack () {
@@ -148,6 +177,7 @@ pidfilehack () {
 			PID=
 		fi
 	fi
+	debug D_NOISY "pidfilehack=$PID"
 }
 
 isrunning () {
@@ -167,11 +197,11 @@ forcequit () {
 		if ! isrunning; then
 			return
 		fi
-		kill -TERM $PID &> /dev/null
+		runcmd kill -TERM $PID
 		sleep 1
 		if isrunning; then
 			warn "$_NAME: server doesn't want to quit"
-			kill -KILL $PID &> /dev/null
+			runcmd kill -KILL $PID
 		fi
 	fi
 	removepid
@@ -315,22 +345,21 @@ init () {
 
 Cmd () {
 	local args="$(stringify "$@")"
-	tryrun "$COMM"Cmd "$args" 2> /dev/null || \
-	tryrun "$EXEC"Cmd "$args" 2> /dev/null || \
-	die 3 "$_NAME: $COMM does not specify a way to communicate" >&2
+	tryrun "$COMM"Cmd "$args" || \
+	tryrun "$EXEC"Cmd "$args" || \
+	die 3 "$_NAME: $COMM does not specify a way to communicate"
 }
 
 Start () {
 	STARTCMD=()
-	"$TYPE"StartCmd 2>/dev/null
-	"$EXEC"StartCmd 2>/dev/null
+	tryrun "$TYPE"StartCmd
+	tryrun "$EXEC"StartCmd
 	if [[ "$COMM" != "$EXEC" ]]; then
-		"$COMM"StartCmd 2>/dev/null
+		tryrun "$COMM"StartCmd
 	fi
-	if ! tryrun "$EXEC"Start "${run[@]}" "${STARTCMD[@]}" "$@" 2> /dev/null
-	then
-		"$SERVER" "${run[@]}" "${STARTCMD[@]}" "$@" \
-			< /dev/null &> /dev/null &
+	if ! tryrun "$EXEC"Start "${run[@]}" "${STARTCMD[@]}" "$@"; then
+		debug D_COMMAND "run $SERVER ${run[@]} ${STARTCMD[@]}"
+		"$SERVER" "${run[@]}" "${STARTCMD[@]}" "$@" < /dev/null &
 		PID=$!
 		disown
 		savepid
@@ -339,16 +368,16 @@ Start () {
 
 Stop () {
 	local args="$(stringify "$@")"
-	if ! tryrun "$EXEC"Stop "$args" 2>/dev/null; then
+	if ! tryrun "$EXEC"Stop "$args"; then
 		isrunning || die 125 "$_NAME: server may not be running"
-		Cmd $QUIT "$args" 2> /dev/null
+		Cmd $QUIT "$args"
 		forcequit
 		removepid
 	fi
 }
 
 Restart () {
-	if ! tryrun "$EXEC"Restart "$@" 2>/dev/null; then
+	if ! tryrun "$EXEC"Restart "$@"; then
 		isrunning || die 125 "$_NAME: server may not be running"
 		Stop Please reconnect in a few seconds
 		Start "$@"
@@ -356,5 +385,5 @@ Restart () {
 }
 
 Reload () {
-	tryrun "$TYPE"Reload 2>/dev/null || Restart
+	tryrun "$TYPE"Reload || Restart
 }
