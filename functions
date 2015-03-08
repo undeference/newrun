@@ -12,23 +12,15 @@
 # see <http://www.gnu.org/licenses/>.
 
 preserve () {
-	cat
+	echo "$*"
 }
 
 upper () {
-	tr [a-z] [A-Z]
-}
-
-uc () {
-	echo "$@" | upper
+	echo "${*^^}"
 }
 
 lower () {
-	tr [A-Z] [a-z]
-}
-
-lc () {
-	echo "$@" | lower
+	echo "${*,,}"
 }
 
 warn () {
