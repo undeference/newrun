@@ -48,7 +48,7 @@ _pipehack_quit () {
 }
 
 _pipehack_start () {
-	local x y msg q="$($CASE "$QUIT"))"
+	local x y msg
 	pidfilehack
 	trap _pipehack_quit HUP INT QUIT KILL PIPE TERM
 	# replace stdin
@@ -63,7 +63,7 @@ _pipehack_start () {
 			_pipehack_send "$x"
 			y=($x)
 			y="$($CASE "${y[0]}")"
-			if [[ "$y" == "$q" ]]; then
+			if [[ "$y" == "$QUIT" ]]; then
 				msg="${x:${#QUIT}+1}"
 				break 2
 			fi
