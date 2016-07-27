@@ -48,6 +48,8 @@ screenCmd () {
 }
 
 screenStart () {
+	# delay a random period in case multiple servers are started
+	usleep $((( RANDOM * 75 )))
 	# if there is no screen session with that name, create it
 	if ! _screen_sessionexists; then
 		if ! runcmd screen -qdmS "$SESSION"; then
@@ -83,6 +85,6 @@ screenStop () {
 		exit 5
 	fi
 	Cmd $QUIT "$@"
-	runcmd screen -qS "$SESSION" -p "$WINDOW" -X kill
+	#runcmd screen -qS "$SESSION" -p "$WINDOW" -X kill
 	forcequit
 }

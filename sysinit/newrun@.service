@@ -3,7 +3,7 @@ Description=newrun - %i
 After=network.target
 
 [Service]
-Type=oneshot
+Type=forking
 RemainAfterExit=yes
 Restart=no
 PIDFile=/var/tmp/%i.pid
@@ -12,7 +12,7 @@ PIDFile=/var/tmp/%i.pid
 ExecStart=path/to/newrun %i start
 ExecReload=path/to/newrun %i reload
 ExecStop=path/to/newrun %i stop Server stopped by systemd
-TimeoutStopSec=0
+TimeoutStopSec=3
 
 [Install]
 WantedBy=multi-user.target

@@ -195,7 +195,7 @@ forcequit () {
 	if isrunning; then
 		sleep 1
 		if ! isrunning; then
-			return
+			break
 		fi
 		runcmd kill -TERM $PID
 		sleep 1
