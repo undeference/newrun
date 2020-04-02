@@ -49,17 +49,15 @@ screenCmd () {
 
 screenStart () {
 	# delay a random period in case multiple servers are started
-	usleep $((( RANDOM * 75 )))
-	# if there is no screen session with that name, create it
-	if ! _screen_sessionexists; then
-		if ! runcmd screen -qdmS "$SESSION"; then
-			warn "$_NAME: could not create session '$SESSION'"
-			exit 5
-		fi
-		sleep 1
-	fi
+	sleep 0.0$((( RANDOM * 75 )))
 
-	runcmd screen -qS "$SESSION" -X screen -t "$WINDOW" "$SERVER" "$@"
+	local args=(-qS "$SESSION")
+	if _screen_sessionexists; then
+		args+=(-X screen -t "$WINDOW")
+	else
+		args+=(-p "$WINDOW" -dm)
+	fi
+	runcmd screen "${args[@]}" "$SERVER" "$@"
 
 	# wait up to 10 seconds
 	local count=10
