@@ -1,7 +1,7 @@
 # newrun copyright © M. Kristall
 
 # path to directory that will be used for storing pid files
-_PIDPATH="${$XDG_RUNTIME_DIR-/var/tmp}"
+_PIDPATH="/var/tmp"
 # path to directory where the server configuration files are located
 _CONFIGPATH="$_PATH/conf"
 
